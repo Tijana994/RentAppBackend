@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Web.Http;
 using System.Web.Http.Cors;
 using Microsoft.Owin.Security.OAuth;
@@ -20,7 +21,7 @@ namespace RentApp
 
             var cors = new EnableCorsAttribute("*", "*", "*");//Ovo na kraju treba zabraniti. Trenutno je ovako kako bi se dozvolilo angular aplikaciji.
             config.EnableCors(cors);
-
+       
             // Web API routes
             config.MapHttpAttributeRoutes();
 
@@ -29,6 +30,11 @@ namespace RentApp
                 routeTemplate: "api/{controller}/{id}",
                 defaults: new { id = RouteParameter.Optional }
             );
+
+            config.Formatters.JsonFormatter.SupportedMediaTypes             // podrazumevano vrati Json rezultat umesto XML-a
+                 .Add(new MediaTypeHeaderValue("text/html"));
+
+            config.Formatters.JsonFormatter.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore;
         }
     }
 }
