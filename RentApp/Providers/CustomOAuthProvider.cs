@@ -13,8 +13,11 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
+using System.Web.Http.Cors;
+
 namespace RentApp.Providers
 {
+    //[EnableCors("*","*","*")]
     public class CustomOAuthProvider : Microsoft.Owin.Security.OAuth.OAuthAuthorizationServerProvider
     {
         public override Task ValidateClientAuthentication(OAuthValidateClientAuthenticationContext context)
@@ -29,6 +32,7 @@ namespace RentApp.Providers
             var allowedOrigin = "*";
 
             context.OwinContext.Response.Headers.Add("Access-Control-Allow-Origin", new[] { allowedOrigin });
+            //context.OwinContext.Response.Headers.Add("Access-Control-Allow-Methods", new[] { "POST", "GET", "PUT", "DELETE", "OPTIONS" });
 
             ApplicationUserManager userManager = context.OwinContext.GetUserManager<ApplicationUserManager>();
 
@@ -45,6 +49,27 @@ namespace RentApp.Providers
             //    context.SetError("invalid_grant", "AppUser did not confirm email.");
             //    return;
             //}
+            
+
+            if (await userManager.IsInRoleAsync(user.UserName, "Admin"))
+            {
+                context.OwinContext.Response.Headers.Add("Role", new[] { "Admin" });
+            }
+            else
+            {
+               
+                if (await userManager.IsInRoleAsync(user.UserName, "Manager"))
+                {
+                    context.OwinContext.Response.Headers.Add("Role", new[] { "Manager" });
+                }
+                else
+                {
+                    context.OwinContext.Response.Headers.Add("Role", new[] { "AppUser" });
+                }
+            }
+
+            context.OwinContext.Response.Headers.Add("Access-Control-Expose-Headers", new[] { "Role" });
+
 
             ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(userManager, "JWT");
 

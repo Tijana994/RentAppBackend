@@ -5,6 +5,7 @@ using System.Linq.Expressions;
 
 namespace RentApp.Repo
 {
+    //prebaci na TPKey
     public interface IRepository<TEntity>
         where TEntity : class
 
@@ -18,6 +19,9 @@ namespace RentApp.Repo
 
         void Remove(TEntity entity);
         void RemoveRange(IEnumerable<TEntity> entities);
+        void Update(TEntity entity);
+
+        TEntity FirstOrDefault(Expression<Func<TEntity, bool>> expression);
     }
 
     

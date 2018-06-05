@@ -7,7 +7,7 @@ using System.Web.Http;
 
 namespace RentApp.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    //[Authorize(Roles = "Admin")]
     public class ValuesController : ApiController
     {
         // GET api/values

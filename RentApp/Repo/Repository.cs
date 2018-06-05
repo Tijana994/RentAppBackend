@@ -54,6 +54,15 @@ namespace RentApp.Repo
             Context.Set<TEntity>().RemoveRange(entities);
         }
 
-        
+        public void Update(TEntity entity)
+        {
+            Context.Set<TEntity>().Attach(entity);
+            Context.Entry(entity).State = EntityState.Modified;
+        }
+
+        public TEntity FirstOrDefault(Expression<Func<TEntity, bool>> expression)
+        {
+            return Context.Set<TEntity>().FirstOrDefault(expression);
+        }
     }
 }

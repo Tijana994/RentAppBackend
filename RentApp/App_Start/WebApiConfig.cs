@@ -31,6 +31,8 @@ namespace RentApp
                 defaults: new { id = RouteParameter.Optional }
             );
 
+            config.Formatters.Add(config.Formatters.JsonFormatter);
+            config.Formatters.Remove(config.Formatters.XmlFormatter);
             config.Formatters.JsonFormatter.SupportedMediaTypes             // podrazumevano vrati Json rezultat umesto XML-a
                  .Add(new MediaTypeHeaderValue("text/html"));
 

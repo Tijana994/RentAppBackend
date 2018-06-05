@@ -16,8 +16,9 @@ namespace RentApp.Repo
 
         public DbContext ApplicationDbContext
         {
-            get { return Context as DbContext; }
+            get { return Context as RADBContext; }
         }
 
+       
     }
 }

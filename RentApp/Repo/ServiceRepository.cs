@@ -13,9 +13,10 @@ namespace RentApp.Repo
         public ServiceRepository(DbContext applicationDbContext) : base(applicationDbContext)
         {
         }
-        public DbContext ApplicationDbContext
+        public IEnumerable<Service> GetAll(int pageIndex, int pageSize)
         {
-            get { return Context as DbContext; }
+            return ApplicationDbContext.Services.Skip((pageIndex - 1) * pageSize).Take(pageSize);
         }
+        protected  RADBContext ApplicationDbContext { get { return Context as RADBContext; } }
     }
 }

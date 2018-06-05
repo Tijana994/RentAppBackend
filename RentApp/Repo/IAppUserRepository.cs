@@ -10,5 +10,6 @@ namespace RentApp.Repo
     public interface IAppUserRepository: IRepository<AppUser>
     {
         //to do
+       
     }
 }
