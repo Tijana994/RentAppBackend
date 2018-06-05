@@ -15,9 +15,17 @@ using Microsoft.Owin.Security.Cookies;
 using Microsoft.Owin.Security.OAuth;
 using RentApp.Models;
 using RentApp.Models.Entities;
+using RentApp.Persistance;
 using RentApp.Providers;
 using RentApp.Repo;
 using RentApp.Results;
+using System.Linq;
+using System.Data;
+using System.Data.Entity;
+using System.Data.Entity.Infrastructure;
+using System.Net;
+using System.Web.Http.Description;
+
 
 namespace RentApp.Controllers
 {
@@ -27,11 +35,13 @@ namespace RentApp.Controllers
     {
         private const string LocalLoginProvider = "Local";
 
-        private IUnitOfWork db { get; set; }
+        private RADBContext ra { get; set; } = new RADBContext();
+
+        //private IUnitOfWork db { get; set; } 
 
         public AccountController(IUnitOfWork db)
         {
-            this.db = db;
+            //this.db = db;//ovde ne pozove
         }
 
         public AccountController(ApplicationUserManager userManager,
@@ -321,23 +331,31 @@ namespace RentApp.Controllers
             {
                 return BadRequest(ModelState);
             }
+
+            
             DateTime enteredDate = DateTime.Parse(model.Birth);
             //
             //new AppUser() { Username = model.Username, FullName = model.Name + " " + model.Surname }
 
-            db.AppUsers.Add(new AppUser { Approved = false, BirthDate = enteredDate, CreateService = false, Surname = model.Surname, LoggedIn = false, Name = model.Name, Username = model.Username, Contact = model.Contact });
+            if (ra.AppUsers.FirstOrDefault(x => x.Username == model.Username) != null)
+            {
+                return NotFound();
+            }
+
+            ra.AppUsers.Add(new AppUser { Approved = false, BirthDate = enteredDate, CreateService = false, Surname = model.Surname, LoggedIn = false, Name = model.Name, Username = model.Username, Contact = model.Contact });
 
             try
             {
-                db.SaveChanges();
+                ra.SaveChanges();
             }
             catch (Exception ex)
             {
                 return NotFound();
             }
             
+            
 
-            var appUser = db.AppUsers.FirstOrDefault(p => p.Username == model.Username);
+            var appUser = ra.AppUsers.FirstOrDefault(x => x.Username == model.Username);
 
             if (appUser == null)
             {
@@ -348,7 +366,8 @@ namespace RentApp.Controllers
 
             IdentityResult result = await UserManager.CreateAsync(user, model.Password);
 
-            //IdentityResult result = await userManager.AddToRole(user.Id, "AppUser");
+            await UserManager.AddToRoleAsync(user.Id, "AppUser"); //proveri sa Lukicem
+            
 
             if (!result.Succeeded)
             {

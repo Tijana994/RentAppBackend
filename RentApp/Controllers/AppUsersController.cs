@@ -11,7 +11,7 @@ using System.Web.Http.Description;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using RentApp.Models.Entities;
-using RentApp.Persistance;
+
 using RentApp.Repo;
 
 namespace RentApp.Controllers
@@ -24,6 +24,7 @@ namespace RentApp.Controllers
         public AppUsersController(IUnitOfWork db)
         {
             this.db = db;
+            
         }
 
         private ApplicationUserManager _userManager;

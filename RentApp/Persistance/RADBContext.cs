@@ -1,10 +1,11 @@
-﻿using Microsoft.AspNet.Identity.EntityFramework;
-using RentApp.Models.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
+using System.Security.AccessControl;
 using System.Web;
+using Microsoft.AspNet.Identity.EntityFramework;
+using RentApp.Models.Entities;
 
 namespace RentApp.Persistance
 {
@@ -33,6 +34,7 @@ namespace RentApp.Persistance
 
         public RADBContext() : base("name=RADB")
         {
+            
         }
 
         public static RADBContext Create()
