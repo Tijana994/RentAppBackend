@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.Entity;
+using System.Data.Entity.Migrations;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Web;
@@ -56,8 +57,10 @@ namespace RentApp.Repo
 
         public void Update(TEntity entity)
         {
-            Context.Set<TEntity>().Attach(entity);
-            Context.Entry(entity).State = EntityState.Modified;
+            // Context.Set<TEntity>().Attach(entity);
+            //Context.Entry(entity).State = EntityState.Detached;
+            //Context.Entry(entity).State = EntityState.Modified;
+            Context.Set<TEntity>().AddOrUpdate(entity);
         }
 
         public TEntity FirstOrDefault(Expression<Func<TEntity, bool>> expression)

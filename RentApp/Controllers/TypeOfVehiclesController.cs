@@ -25,8 +25,13 @@ namespace RentApp.Controllers
 
         }
 
+
+
         // GET: api/TypeOfVehicles
-        public IEnumerable<TypeOfVehicle> GetTypeOfVehicles()
+        [HttpGet]
+        [Authorize(Roles = "Admin")]
+        [Route("GetAllTypeOfVehicles")]
+        public IEnumerable<TypeOfVehicle> GetAllTypeOfVehicles()
         {
             return db.TypeOfVehicles.GetAll();
         }
@@ -49,36 +54,41 @@ namespace RentApp.Controllers
         // PUT: api/TypeOfVehicles/5
         [HttpPut]
         [Authorize(Roles ="Admin")]
-        [Route("PutTypeOfVehicle")]
+        [Route("PutTypeOfVehicle/{id}")]
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutTypeOfVehicle(int id, TypeOfVehicle typeOfVehicle)
+        public IHttpActionResult PutTypeOfVehicle(int id, TypeOfVehicle type)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != typeOfVehicle.Id)
+            if (db.TypeOfVehicles.Get(id) == null)
             {
                 return BadRequest();
             }
 
-            db.TypeOfVehicles.Update(typeOfVehicle);
+            if (db.TypeOfVehicles.Any(x => x.Name.Equals(type.Name) && x.Id != type.Id))
+            {
+                
+                return BadRequest("This name is not unique");
+                
+                
+            }
+
+
+            
+
 
             try
             {
+                db.TypeOfVehicles.Update(type);
                 db.SaveChanges();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!TypeOfVehicleExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+
+                return BadRequest("Somebody change this type already");
             }
 
             return StatusCode(HttpStatusCode.NoContent);
@@ -118,7 +128,7 @@ namespace RentApp.Controllers
         // DELETE: api/TypeOfVehicles/5
         [HttpDelete]
         [Authorize(Roles = "Admin")]
-        [Route("DeleteTypeOfVehicle")]
+        [Route("DeleteTypeOfVehicle/{id}")]
         [ResponseType(typeof(TypeOfVehicle))]
         public IHttpActionResult DeleteTypeOfVehicle(int id)
         {
@@ -129,7 +139,17 @@ namespace RentApp.Controllers
             }
 
             db.TypeOfVehicles.Remove(typeOfVehicle);
-            db.SaveChanges();
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest("Somebody change this type already");
+            }
+
 
             return Ok(typeOfVehicle);
         }
