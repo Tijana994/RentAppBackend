@@ -49,6 +49,7 @@ namespace RentApp.Controllers
         // PUT: api/TypeOfVehicles/5
         [HttpPut]
         [Authorize(Roles ="Admin")]
+        [Route("PutTypeOfVehicle")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutTypeOfVehicle(int id, TypeOfVehicle typeOfVehicle)
         {
@@ -117,6 +118,7 @@ namespace RentApp.Controllers
         // DELETE: api/TypeOfVehicles/5
         [HttpDelete]
         [Authorize(Roles = "Admin")]
+        [Route("DeleteTypeOfVehicle")]
         [ResponseType(typeof(TypeOfVehicle))]
         public IHttpActionResult DeleteTypeOfVehicle(int id)
         {

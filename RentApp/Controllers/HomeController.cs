@@ -8,6 +8,7 @@ using Unity.Attributes;
 
 namespace RentApp.Controllers
 {
+    [RoutePrefix("api/Home")]
     public class HomeController : Controller
     {
     

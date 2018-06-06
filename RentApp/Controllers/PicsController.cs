@@ -14,6 +14,7 @@ using RentApp.Repo;
 
 namespace RentApp.Controllers
 {
+    [RoutePrefix("api/Pics")]
     public class PicsController : ApiController
     {
         private IUnitOfWork db;
@@ -47,6 +48,7 @@ namespace RentApp.Controllers
         // PUT: api/Pics/5
         [HttpPut]
         [Authorize]
+        [Route("PutPic")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutPic(int id, Pic pic)
         {
@@ -84,6 +86,7 @@ namespace RentApp.Controllers
         // POST: api/Pics
         [HttpPost]
         [Authorize]
+        [Route("PostPic")]
         [ResponseType(typeof(Pic))]
         public IHttpActionResult PostPic(Pic pic)
         {
@@ -101,6 +104,7 @@ namespace RentApp.Controllers
         // DELETE: api/Pics/5
         [HttpDelete]
         [Authorize]
+        [Route("DeletePic")]
         [ResponseType(typeof(Pic))]
         public IHttpActionResult DeletePic(int id)
         {

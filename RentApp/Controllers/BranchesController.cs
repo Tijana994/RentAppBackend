@@ -14,6 +14,7 @@ using RentApp.Repo;
 
 namespace RentApp.Controllers
 {
+    [RoutePrefix("api/Branches")]
     public class BranchesController : ApiController
     {
         private IUnitOfWork db { get; set; }
@@ -84,6 +85,7 @@ namespace RentApp.Controllers
         // POST: api/Branches
         [HttpPost]
         [Authorize(Roles = "Manager")]
+        [Route("PostBranch")]
         [ResponseType(typeof(Branch))]
         public IHttpActionResult PostBranch(Branch branch)
         {

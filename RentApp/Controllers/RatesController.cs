@@ -14,6 +14,7 @@ using RentApp.Repo;
 
 namespace RentApp.Controllers
 {
+    [RoutePrefix("api/Rates")]
     public class RatesController : ApiController
     {
         private IUnitOfWork db { get; set; }
@@ -42,6 +43,7 @@ namespace RentApp.Controllers
         // PUT: api/Rates/5
         [HttpPut]
         [Authorize]
+        [Route("PutRate")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutRate(int id, Rate rate)
         {
@@ -79,6 +81,7 @@ namespace RentApp.Controllers
         // POST: api/Rates
         [HttpPost]
         [Authorize]
+        [Route("PostRate")]
         [ResponseType(typeof(Rate))]
         public IHttpActionResult PostRate(Rate rate)
         {
@@ -96,6 +99,7 @@ namespace RentApp.Controllers
         // DELETE: api/Rates/5
         [HttpDelete]
         [Authorize]
+        [Route("DeleteRate")]
         [ResponseType(typeof(Rate))]
         public IHttpActionResult DeleteRate(int id)
         {

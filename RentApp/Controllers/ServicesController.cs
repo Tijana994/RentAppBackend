@@ -14,6 +14,7 @@ using RentApp.Repo;
 
 namespace RentApp.Controllers
 {
+    [RoutePrefix("api/Services")]
     public class ServicesController : ApiController
     {
         private IUnitOfWork db;
@@ -47,6 +48,7 @@ namespace RentApp.Controllers
         // PUT: api/Services/5
         [HttpPut]
         [Authorize(Roles = "Manager")]
+        [Route("PutService")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutService(int id, Service service)
         {
@@ -84,6 +86,7 @@ namespace RentApp.Controllers
         // POST: api/Services
         [HttpPost]
         [Authorize(Roles = "Manager")]
+        [Route("PostService")]
         [ResponseType(typeof(Service))]
         public IHttpActionResult PostService(Service service)
         {
@@ -101,6 +104,7 @@ namespace RentApp.Controllers
         // DELETE: api/Services/5
         [HttpDelete]
         [Authorize(Roles = "Manager")]
+        [Route("DeleteService")]
         [ResponseType(typeof(Service))]
         public IHttpActionResult DeleteService(int id)
         {

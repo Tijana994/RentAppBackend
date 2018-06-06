@@ -14,6 +14,7 @@ using RentApp.Repo;
 
 namespace RentApp.Controllers
 {
+    [RoutePrefix("api/PriceLists")]
     public class PriceListsController : ApiController
     {
         private IUnitOfWork db { get; set; }
@@ -42,6 +43,7 @@ namespace RentApp.Controllers
         // PUT: api/PriceLists/5
         [HttpPut]
         [Authorize(Roles = "Manager")]
+        [Route("PutPriceList")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutPriceList(int id, PriceList priceList)
         {
@@ -79,6 +81,7 @@ namespace RentApp.Controllers
         // POST: api/PriceLists
         [HttpPost]
         [Authorize(Roles = "Manager")]
+        [Route("PostPriceList")]
         [ResponseType(typeof(PriceList))]
         public IHttpActionResult PostPriceList(PriceList priceList)
         {
@@ -96,6 +99,7 @@ namespace RentApp.Controllers
         // DELETE: api/PriceLists/5
         [HttpDelete]
         [Authorize(Roles = "Manager")]
+        [Route("DeletePriceList")]
         [ResponseType(typeof(PriceList))]
         public IHttpActionResult DeletePriceList(int id)
         {

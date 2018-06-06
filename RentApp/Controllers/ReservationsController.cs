@@ -14,6 +14,7 @@ using RentApp.Repo;
 
 namespace RentApp.Controllers
 {
+    [RoutePrefix("api/Reservations")]
     public class ReservationsController : ApiController
     {
         private IUnitOfWork db { get; set; }
@@ -42,6 +43,7 @@ namespace RentApp.Controllers
         // PUT: api/Reservations/5
         [HttpPut]
         [Authorize]
+        [Route("PutReservation")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutReservation(int id, Reservation reservation)
         {
@@ -79,6 +81,7 @@ namespace RentApp.Controllers
         // POST: api/Reservations
         [HttpPost]
         [Authorize]
+        [Route("PostReservation")]
         [ResponseType(typeof(Reservation))]
         public IHttpActionResult PostReservation(Reservation reservation)
         {
@@ -96,6 +99,7 @@ namespace RentApp.Controllers
         // DELETE: api/Reservations/5
         [HttpDelete]
         [Authorize]
+        [Route("DeleteReservation")]
         [ResponseType(typeof(Reservation))]
         public IHttpActionResult DeleteReservation(int id)
         {

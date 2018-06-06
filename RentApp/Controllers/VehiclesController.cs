@@ -14,6 +14,7 @@ using RentApp.Repo;
 
 namespace RentApp.Controllers
 {
+    [RoutePrefix("api/Vehicles")]
     public class VehiclesController : ApiController
     {
         private IUnitOfWork db { get; set; }
@@ -42,6 +43,7 @@ namespace RentApp.Controllers
         // PUT: api/Vehicles/5
         [HttpPut]
         [Authorize(Roles = "Manager")]
+        [Route("PutVehicle")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutVehicle(int id, Vehicle vehicle)
         {
@@ -79,6 +81,7 @@ namespace RentApp.Controllers
         // POST: api/Vehicles
         [HttpPost]
         [Authorize(Roles = "Manager")]
+        [Route("PostVehicle")]
         [ResponseType(typeof(Vehicle))]
         public IHttpActionResult PostVehicle(Vehicle vehicle)
         {
@@ -96,6 +99,7 @@ namespace RentApp.Controllers
         // DELETE: api/Vehicles/5
         [HttpDelete]
         [Authorize(Roles = "Manager")]
+        [Route("DeleteService")]
         [ResponseType(typeof(Vehicle))]
         public IHttpActionResult DeleteVehicle(int id)
         {
