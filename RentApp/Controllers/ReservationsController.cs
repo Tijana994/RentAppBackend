@@ -14,53 +14,48 @@ using RentApp.Repo;
 
 namespace RentApp.Controllers
 {
-    public class ServicesController : ApiController
+    public class ReservationsController : ApiController
     {
-        private IUnitOfWork db;
+        private IUnitOfWork db { get; set; }
 
-        public ServicesController(IUnitOfWork db)
+        public ReservationsController(IUnitOfWork db)
         {
             this.db = db;
+
         }
 
-        // GET: api/Services
-        public IEnumerable<Service> GetServices()
-        {
-            return db.Services.GetAll();
-        }
-
-        // GET: api/Services/5
+        // GET: api/Reservations/5
         [HttpGet]
-        [Route("GetService/{id}")]
-        [ResponseType(typeof(Service))]
-        public IHttpActionResult GetService(int id)
+        [Route("GetReservation/{id}")]
+        [ResponseType(typeof(Reservation))]
+        public IHttpActionResult GetReservation(int id)
         {
-            Service service = db.Services.Get(id);
-            if (service == null)
+            Reservation reservation = db.Reservations.Get(id);
+            if (reservation == null)
             {
                 return NotFound();
             }
 
-            return Ok(service);
+            return Ok(reservation);
         }
 
-        // PUT: api/Services/5
+        // PUT: api/Reservations/5
         [HttpPut]
-        [Authorize(Roles = "Manager")]
+        [Authorize]
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutService(int id, Service service)
+        public IHttpActionResult PutReservation(int id, Reservation reservation)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != service.Id)
+            if (id != reservation.Id)
             {
                 return BadRequest();
             }
 
-            db.Services.Update(service);
+            db.Reservations.Update(reservation);
 
             try
             {
@@ -68,7 +63,7 @@ namespace RentApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ServiceExists(id))
+                if (!ReservationExists(id))
                 {
                     return NotFound();
                 }
@@ -81,39 +76,39 @@ namespace RentApp.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Services
+        // POST: api/Reservations
         [HttpPost]
-        [Authorize(Roles = "Manager")]
-        [ResponseType(typeof(Service))]
-        public IHttpActionResult PostService(Service service)
+        [Authorize]
+        [ResponseType(typeof(Reservation))]
+        public IHttpActionResult PostReservation(Reservation reservation)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Services.Add(service);
+            db.Reservations.Add(reservation);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = service.Id }, service);
+            return CreatedAtRoute("DefaultApi", new { id = reservation.Id }, reservation);
         }
 
-        // DELETE: api/Services/5
+        // DELETE: api/Reservations/5
         [HttpDelete]
-        [Authorize(Roles = "Manager")]
-        [ResponseType(typeof(Service))]
-        public IHttpActionResult DeleteService(int id)
+        [Authorize]
+        [ResponseType(typeof(Reservation))]
+        public IHttpActionResult DeleteReservation(int id)
         {
-            Service service = db.Services.Get(id);
-            if (service == null)
+            Reservation reservation = db.Reservations.Get(id);
+            if (reservation == null)
             {
                 return NotFound();
             }
 
-            db.Services.Remove(service);
+            db.Reservations.Remove(reservation);
             db.SaveChanges();
 
-            return Ok(service);
+            return Ok(reservation);
         }
 
         protected override void Dispose(bool disposing)
@@ -125,9 +120,9 @@ namespace RentApp.Controllers
             base.Dispose(disposing);
         }
 
-        private bool ServiceExists(int id)
+        private bool ReservationExists(int id)
         {
-            return db.Services.FirstOrDefault(e => e.Id == id) != null;
+            return db.Reservations.Find(e => e.Id == id).Count() > 0;
         }
     }
 }

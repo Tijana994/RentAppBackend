@@ -31,6 +31,8 @@ namespace RentApp.Controllers
         }
 
         // GET: api/TypeOfVehicles/5
+        [HttpGet]
+        [Route("GetTypeOfVehicles/{id}")]
         [ResponseType(typeof(TypeOfVehicle))]
         public IHttpActionResult GetTypeOfVehicle(int id)
         {
@@ -44,6 +46,8 @@ namespace RentApp.Controllers
         }
 
         // PUT: api/TypeOfVehicles/5
+        [HttpPut]
+        [Authorize(Roles ="Admin")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutTypeOfVehicle(int id, TypeOfVehicle typeOfVehicle)
         {
@@ -79,6 +83,8 @@ namespace RentApp.Controllers
         }
 
         // POST: api/TypeOfVehicles
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ResponseType(typeof(TypeOfVehicle))]
         public IHttpActionResult PostTypeOfVehicle(TypeOfVehicle typeOfVehicle)
         {
@@ -94,6 +100,8 @@ namespace RentApp.Controllers
         }
 
         // DELETE: api/TypeOfVehicles/5
+        [HttpDelete]
+        [Authorize(Roles = "Admin")]
         [ResponseType(typeof(TypeOfVehicle))]
         public IHttpActionResult DeleteTypeOfVehicle(int id)
         {

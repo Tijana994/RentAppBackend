@@ -14,53 +14,48 @@ using RentApp.Repo;
 
 namespace RentApp.Controllers
 {
-    public class ServicesController : ApiController
+    public class RatesController : ApiController
     {
-        private IUnitOfWork db;
+        private IUnitOfWork db { get; set; }
 
-        public ServicesController(IUnitOfWork db)
+        public RatesController(IUnitOfWork db)
         {
             this.db = db;
+
         }
 
-        // GET: api/Services
-        public IEnumerable<Service> GetServices()
-        {
-            return db.Services.GetAll();
-        }
-
-        // GET: api/Services/5
+        // GET: api/Rates/5
         [HttpGet]
-        [Route("GetService/{id}")]
-        [ResponseType(typeof(Service))]
-        public IHttpActionResult GetService(int id)
+        [Route("GetRate/{id}")]
+        [ResponseType(typeof(Rate))]
+        public IHttpActionResult GetRate(int id)
         {
-            Service service = db.Services.Get(id);
-            if (service == null)
+            Rate rate = db.Rates.Get(id);
+            if (rate == null)
             {
                 return NotFound();
             }
 
-            return Ok(service);
+            return Ok(rate);
         }
 
-        // PUT: api/Services/5
+        // PUT: api/Rates/5
         [HttpPut]
-        [Authorize(Roles = "Manager")]
+        [Authorize]
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutService(int id, Service service)
+        public IHttpActionResult PutRate(int id, Rate rate)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != service.Id)
+            if (id != rate.Id)
             {
                 return BadRequest();
             }
 
-            db.Services.Update(service);
+            db.Rates.Update(rate);
 
             try
             {
@@ -68,7 +63,7 @@ namespace RentApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ServiceExists(id))
+                if (!RateExists(id))
                 {
                     return NotFound();
                 }
@@ -81,39 +76,39 @@ namespace RentApp.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Services
+        // POST: api/Rates
         [HttpPost]
-        [Authorize(Roles = "Manager")]
-        [ResponseType(typeof(Service))]
-        public IHttpActionResult PostService(Service service)
+        [Authorize]
+        [ResponseType(typeof(Rate))]
+        public IHttpActionResult PostRate(Rate rate)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Services.Add(service);
+            db.Rates.Add(rate);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = service.Id }, service);
+            return CreatedAtRoute("DefaultApi", new { id = rate.Id }, rate);
         }
 
-        // DELETE: api/Services/5
+        // DELETE: api/Rates/5
         [HttpDelete]
-        [Authorize(Roles = "Manager")]
-        [ResponseType(typeof(Service))]
-        public IHttpActionResult DeleteService(int id)
+        [Authorize]
+        [ResponseType(typeof(Rate))]
+        public IHttpActionResult DeleteRate(int id)
         {
-            Service service = db.Services.Get(id);
-            if (service == null)
+            Rate rate = db.Rates.Get(id);
+            if (rate == null)
             {
                 return NotFound();
             }
 
-            db.Services.Remove(service);
+            db.Rates.Remove(rate);
             db.SaveChanges();
 
-            return Ok(service);
+            return Ok(rate);
         }
 
         protected override void Dispose(bool disposing)
@@ -125,9 +120,9 @@ namespace RentApp.Controllers
             base.Dispose(disposing);
         }
 
-        private bool ServiceExists(int id)
+        private bool RateExists(int id)
         {
-            return db.Services.FirstOrDefault(e => e.Id == id) != null;
+            return db.Rates.Find(e => e.Id == id).Count() > 0;
         }
     }
 }

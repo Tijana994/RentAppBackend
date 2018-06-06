@@ -30,6 +30,8 @@ namespace RentApp.Controllers
         }
 
         // GET: api/Branches/5
+        [HttpGet]
+        [Route("GetBranch/{id}")]
         [ResponseType(typeof(Branch))]
         public IHttpActionResult GetBranch(int id)
         {
@@ -43,6 +45,8 @@ namespace RentApp.Controllers
         }
 
         // PUT: api/Branches/5
+        [HttpPut]
+        [Authorize(Roles = "Manager")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutBranch(int id, Branch branch)
         {
@@ -78,6 +82,8 @@ namespace RentApp.Controllers
         }
 
         // POST: api/Branches
+        [HttpPost]
+        [Authorize(Roles = "Manager")]
         [ResponseType(typeof(Branch))]
         public IHttpActionResult PostBranch(Branch branch)
         {
@@ -93,6 +99,8 @@ namespace RentApp.Controllers
         }
 
         // DELETE: api/Branches/5
+        [HttpDelete]
+        [Authorize(Roles = "Manager")]
         [ResponseType(typeof(Branch))]
         public IHttpActionResult DeleteBranch(int id)
         {

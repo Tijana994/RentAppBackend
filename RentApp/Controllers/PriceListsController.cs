@@ -14,53 +14,48 @@ using RentApp.Repo;
 
 namespace RentApp.Controllers
 {
-    public class ServicesController : ApiController
+    public class PriceListsController : ApiController
     {
-        private IUnitOfWork db;
+        private IUnitOfWork db { get; set; }
 
-        public ServicesController(IUnitOfWork db)
+        public PriceListsController(IUnitOfWork db)
         {
             this.db = db;
+
         }
 
-        // GET: api/Services
-        public IEnumerable<Service> GetServices()
-        {
-            return db.Services.GetAll();
-        }
-
-        // GET: api/Services/5
+        // GET: api/PriceLists/5
         [HttpGet]
-        [Route("GetService/{id}")]
-        [ResponseType(typeof(Service))]
-        public IHttpActionResult GetService(int id)
+        [Route("GetPriceList/{id}")]
+        [ResponseType(typeof(PriceList))]
+        public IHttpActionResult GetPriceList(int id)
         {
-            Service service = db.Services.Get(id);
-            if (service == null)
+            PriceList priceList = db.PriceLists.Get(id);
+            if (priceList == null)
             {
                 return NotFound();
             }
 
-            return Ok(service);
+            return Ok(priceList);
         }
 
-        // PUT: api/Services/5
+        // PUT: api/PriceLists/5
         [HttpPut]
         [Authorize(Roles = "Manager")]
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutService(int id, Service service)
+        public IHttpActionResult PutPriceList(int id, PriceList priceList)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != service.Id)
+            if (id != priceList.Id)
             {
                 return BadRequest();
             }
 
-            db.Services.Update(service);
+            db.PriceLists.Update(priceList);
 
             try
             {
@@ -68,7 +63,7 @@ namespace RentApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ServiceExists(id))
+                if (!PriceListExists(id))
                 {
                     return NotFound();
                 }
@@ -81,39 +76,39 @@ namespace RentApp.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Services
+        // POST: api/PriceLists
         [HttpPost]
         [Authorize(Roles = "Manager")]
-        [ResponseType(typeof(Service))]
-        public IHttpActionResult PostService(Service service)
+        [ResponseType(typeof(PriceList))]
+        public IHttpActionResult PostPriceList(PriceList priceList)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Services.Add(service);
+            db.PriceLists.Add(priceList);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = service.Id }, service);
+            return CreatedAtRoute("DefaultApi", new { id = priceList.Id }, priceList);
         }
 
-        // DELETE: api/Services/5
+        // DELETE: api/PriceLists/5
         [HttpDelete]
         [Authorize(Roles = "Manager")]
-        [ResponseType(typeof(Service))]
-        public IHttpActionResult DeleteService(int id)
+        [ResponseType(typeof(PriceList))]
+        public IHttpActionResult DeletePriceList(int id)
         {
-            Service service = db.Services.Get(id);
-            if (service == null)
+            PriceList priceList = db.PriceLists.Get(id);
+            if (priceList == null)
             {
                 return NotFound();
             }
 
-            db.Services.Remove(service);
+            db.PriceLists.Remove(priceList);
             db.SaveChanges();
 
-            return Ok(service);
+            return Ok(priceList);
         }
 
         protected override void Dispose(bool disposing)
@@ -125,9 +120,9 @@ namespace RentApp.Controllers
             base.Dispose(disposing);
         }
 
-        private bool ServiceExists(int id)
+        private bool PriceListExists(int id)
         {
-            return db.Services.FirstOrDefault(e => e.Id == id) != null;
+            return db.PriceLists.Find(e => e.Id == id).Count() > 0;
         }
     }
 }

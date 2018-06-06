@@ -72,6 +72,8 @@ namespace RentApp.Controllers
         }
 
         // PUT: api/AppUsers/5
+        [HttpPut]
+        [Authorize(Roles = "Admin")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutAppUser(int id, AppUser appUser)
         {
@@ -107,6 +109,8 @@ namespace RentApp.Controllers
         }
 
         // POST: api/AppUsers
+        [HttpPost]
+        [Authorize(Roles = "Admin")]
         [ResponseType(typeof(AppUser))]
         public IHttpActionResult PostAppUser(AppUser appUser)
         {
@@ -122,6 +126,8 @@ namespace RentApp.Controllers
         }
 
         // DELETE: api/AppUsers/5
+        [HttpDelete]
+        [Authorize(Roles = "Admin")]
         [ResponseType(typeof(AppUser))]
         public IHttpActionResult DeleteAppUser(int id)
         {

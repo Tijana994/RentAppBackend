@@ -14,53 +14,48 @@ using RentApp.Repo;
 
 namespace RentApp.Controllers
 {
-    public class ServicesController : ApiController
+    public class VehiclesController : ApiController
     {
-        private IUnitOfWork db;
+        private IUnitOfWork db { get; set; }
 
-        public ServicesController(IUnitOfWork db)
+        public VehiclesController(IUnitOfWork db)
         {
             this.db = db;
+
         }
 
-        // GET: api/Services
-        public IEnumerable<Service> GetServices()
-        {
-            return db.Services.GetAll();
-        }
-
-        // GET: api/Services/5
+        // GET: api/Vehicles/5
         [HttpGet]
-        [Route("GetService/{id}")]
-        [ResponseType(typeof(Service))]
-        public IHttpActionResult GetService(int id)
+        [Route("GetVehicle/{id}")]
+        [ResponseType(typeof(Vehicle))]
+        public IHttpActionResult GetVehicle(int id)
         {
-            Service service = db.Services.Get(id);
-            if (service == null)
+            Vehicle vehicle = db.Vehicles.Get(id);
+            if (vehicle == null)
             {
                 return NotFound();
             }
 
-            return Ok(service);
+            return Ok(vehicle);
         }
 
-        // PUT: api/Services/5
+        // PUT: api/Vehicles/5
         [HttpPut]
         [Authorize(Roles = "Manager")]
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutService(int id, Service service)
+        public IHttpActionResult PutVehicle(int id, Vehicle vehicle)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != service.Id)
+            if (id != vehicle.Id)
             {
                 return BadRequest();
             }
 
-            db.Services.Update(service);
+            db.Vehicles.Update(vehicle);
 
             try
             {
@@ -68,7 +63,7 @@ namespace RentApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ServiceExists(id))
+                if (!VehicleExists(id))
                 {
                     return NotFound();
                 }
@@ -81,39 +76,39 @@ namespace RentApp.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Services
+        // POST: api/Vehicles
         [HttpPost]
         [Authorize(Roles = "Manager")]
-        [ResponseType(typeof(Service))]
-        public IHttpActionResult PostService(Service service)
+        [ResponseType(typeof(Vehicle))]
+        public IHttpActionResult PostVehicle(Vehicle vehicle)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Services.Add(service);
+            db.Vehicles.Add(vehicle);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = service.Id }, service);
+            return CreatedAtRoute("DefaultApi", new { id = vehicle.Id }, vehicle);
         }
 
-        // DELETE: api/Services/5
+        // DELETE: api/Vehicles/5
         [HttpDelete]
         [Authorize(Roles = "Manager")]
-        [ResponseType(typeof(Service))]
-        public IHttpActionResult DeleteService(int id)
+        [ResponseType(typeof(Vehicle))]
+        public IHttpActionResult DeleteVehicle(int id)
         {
-            Service service = db.Services.Get(id);
-            if (service == null)
+            Vehicle vehicle = db.Vehicles.Get(id);
+            if (vehicle == null)
             {
                 return NotFound();
             }
 
-            db.Services.Remove(service);
+            db.Vehicles.Remove(vehicle);
             db.SaveChanges();
 
-            return Ok(service);
+            return Ok(vehicle);
         }
 
         protected override void Dispose(bool disposing)
@@ -125,9 +120,9 @@ namespace RentApp.Controllers
             base.Dispose(disposing);
         }
 
-        private bool ServiceExists(int id)
+        private bool VehicleExists(int id)
         {
-            return db.Services.FirstOrDefault(e => e.Id == id) != null;
+            return db.Vehicles.Find(e => e.Id == id).Count() > 0;
         }
     }
 }

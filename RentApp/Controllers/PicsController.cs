@@ -30,6 +30,8 @@ namespace RentApp.Controllers
         }
 
         // GET: api/Pics/5
+        [HttpGet]
+        [Route("GetPic/{id}")]
         [ResponseType(typeof(Pic))]
         public IHttpActionResult GetPic(int id)
         {
@@ -43,6 +45,8 @@ namespace RentApp.Controllers
         }
 
         // PUT: api/Pics/5
+        [HttpPut]
+        [Authorize]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutPic(int id, Pic pic)
         {
@@ -78,6 +82,8 @@ namespace RentApp.Controllers
         }
 
         // POST: api/Pics
+        [HttpPost]
+        [Authorize]
         [ResponseType(typeof(Pic))]
         public IHttpActionResult PostPic(Pic pic)
         {
@@ -93,6 +99,8 @@ namespace RentApp.Controllers
         }
 
         // DELETE: api/Pics/5
+        [HttpDelete]
+        [Authorize]
         [ResponseType(typeof(Pic))]
         public IHttpActionResult DeletePic(int id)
         {
