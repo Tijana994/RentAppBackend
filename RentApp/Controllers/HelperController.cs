@@ -42,7 +42,7 @@ namespace RentApp.Controllers
                 MailMessage mm = new MailMessage(email_from, email_to);
                 mm.BodyEncoding = UTF8Encoding.UTF8;
                 mm.Subject = @"Account Confirmation [MT RentAVehicle]";
-                mm.Body = "Dear,\n\nYour account on MT RentAVehicle service is confirmed\n\nThe best regards,\nMT RentAVehicle Admin tim";
+                mm.Body = "Dear,\n\nYour account on MT RentAVehicle service is confirmed.\n\nThe best regards,\nMT RentAVehicle Admin tim";
                 mm.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
 
                 client.Send(mm);
@@ -54,6 +54,41 @@ namespace RentApp.Controllers
                 return -1;
             }
         }
+
+        public static int sendServiceConfirmationEmail(string userEmail, string serviceName)
+        {
+            string email_to = userEmail;
+            string email_from = "forumblok@gmail.com";
+            string email_from_sifra = "sifra123";
+
+            try
+            {
+                SmtpClient client = new SmtpClient();
+                client.Port = 587;
+                client.Host = "smtp.gmail.com";
+                client.EnableSsl = true;
+                client.Timeout = 10000;
+                client.DeliveryMethod = SmtpDeliveryMethod.Network;
+                client.UseDefaultCredentials = false;
+                client.Credentials = new System.Net.NetworkCredential(email_from, email_from_sifra);
+
+                MailMessage mm = new MailMessage(email_from, email_to);
+                mm.BodyEncoding = UTF8Encoding.UTF8;
+                mm.Subject = @"Service Confirmation [MT RentAVehicle]";
+                mm.Body = $"Dear,\n\nYour service {serviceName} on MT RentAVehicle service is confirmed.\n\nThe best regards,\nMT RentAVehicle Admin tim";
+                mm.DeliveryNotificationOptions = DeliveryNotificationOptions.OnFailure;
+
+                client.Send(mm);
+                return 1;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Greska, email nije poslat");
+                return -1;
+            }
+        }
+
+
 
     }
 }
