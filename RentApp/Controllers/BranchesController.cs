@@ -14,49 +14,49 @@ using RentApp.Repo;
 
 namespace RentApp.Controllers
 {
-    public class ServicesController : ApiController
+    public class BranchesController : ApiController
     {
-        private IUnitOfWork db;
+        private IUnitOfWork db { get; set; }
 
-        public ServicesController(IUnitOfWork db)
+        public BranchesController(IUnitOfWork db)
         {
             this.db = db;
         }
 
-        // GET: api/Services
-        public IEnumerable<Service> GetServices()
+        // GET: api/Branches
+        public IEnumerable<Branch> GetBranches()
         {
-            return db.Services.GetAll();
+            return db.Branches.GetAll();
         }
 
-        // GET: api/Services/5
-        [ResponseType(typeof(Service))]
-        public IHttpActionResult GetService(int id)
+        // GET: api/Branches/5
+        [ResponseType(typeof(Branch))]
+        public IHttpActionResult GetBranch(int id)
         {
-            Service service = db.Services.Get(id);
-            if (service == null)
+            Branch branch = db.Branches.Get(id);
+            if (branch == null)
             {
                 return NotFound();
             }
 
-            return Ok(service);
+            return Ok(branch);
         }
 
-        // PUT: api/Services/5
+        // PUT: api/Branches/5
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutService(int id, Service service)
+        public IHttpActionResult PutBranch(int id, Branch branch)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != service.Id)
+            if (id != branch.Id)
             {
                 return BadRequest();
             }
 
-            db.Services.Update(service);
+            db.Branches.Update(branch);
 
             try
             {
@@ -64,7 +64,7 @@ namespace RentApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ServiceExists(id))
+                if (!BranchExists(id))
                 {
                     return NotFound();
                 }
@@ -77,35 +77,35 @@ namespace RentApp.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Services
-        [ResponseType(typeof(Service))]
-        public IHttpActionResult PostService(Service service)
+        // POST: api/Branches
+        [ResponseType(typeof(Branch))]
+        public IHttpActionResult PostBranch(Branch branch)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Services.Add(service);
+            db.Branches.Add(branch);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = service.Id }, service);
+            return CreatedAtRoute("DefaultApi", new { id = branch.Id }, branch);
         }
 
-        // DELETE: api/Services/5
-        [ResponseType(typeof(Service))]
-        public IHttpActionResult DeleteService(int id)
+        // DELETE: api/Branches/5
+        [ResponseType(typeof(Branch))]
+        public IHttpActionResult DeleteBranch(int id)
         {
-            Service service = db.Services.Get(id);
-            if (service == null)
+            Branch branch = db.Branches.Get(id);
+            if (branch == null)
             {
                 return NotFound();
             }
 
-            db.Services.Remove(service);
+            db.Branches.Remove(branch);
             db.SaveChanges();
 
-            return Ok(service);
+            return Ok(branch);
         }
 
         protected override void Dispose(bool disposing)
@@ -117,9 +117,9 @@ namespace RentApp.Controllers
             base.Dispose(disposing);
         }
 
-        private bool ServiceExists(int id)
+        private bool BranchExists(int id)
         {
-            return db.Services.FirstOrDefault(e => e.Id == id) != null;
+            return db.Branches.FirstOrDefault(e => e.Id == id) != null;
         }
     }
 }

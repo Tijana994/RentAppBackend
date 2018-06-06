@@ -11,7 +11,7 @@ using System.Web.Http.Description;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using RentApp.Models.Entities;
-using RentApp.Persistance;
+
 using RentApp.Repo;
 
 namespace RentApp.Controllers
@@ -24,6 +24,7 @@ namespace RentApp.Controllers
         public AppUsersController(IUnitOfWork db)
         {
             this.db = db;
+            
         }
 
         private ApplicationUserManager _userManager;
@@ -42,10 +43,10 @@ namespace RentApp.Controllers
 
 
         // GET: api/AppUsers pitati sutra
-        //public IQueryable<AppUser> GetAppUsers()
-        //{
-        //    return db.AppUsers.GetAll();
-        //}
+        public IEnumerable<AppUser> GetAppUsers()
+        {
+            return db.AppUsers.GetAll();
+        }
 
         // GET: api/AppUsers/5[HttpGet]
         [HttpGet]
@@ -84,7 +85,7 @@ namespace RentApp.Controllers
                 return BadRequest();
             }
 
-            //db.Entry(appUser).State = EntityState.Modified;
+            db.AppUsers.Update(appUser);
 
             try
             {
