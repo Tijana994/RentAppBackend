@@ -37,7 +37,7 @@ namespace RentApp.Controllers
 
         //private RADBContext ra { get; set; } = new RADBContext();
 
-        private IUnitOfWork db { get; set; } 
+        private IUnitOfWork db { get; set; }
 
         public AccountController(ApplicationUserManager userManager,
             ISecureDataFormat<AuthenticationTicket> accessTokenFormat, IUnitOfWork db)
@@ -67,9 +67,30 @@ namespace RentApp.Controllers
         }
 
         // POST api/Account/Logout
-        [Route("Logout")]
-        public IHttpActionResult Logout()
+        [HttpPost]
+        [Route("Logout/{id}")]
+        [Authorize]
+        public IHttpActionResult Logout(int id)
         {
+            var user = db.AppUsers.Get(id);
+
+
+            if(user == null)
+            {
+                return BadRequest();
+            }
+
+            user.LoggedIn = false;
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+
             Authentication.SignOut(CookieAuthenticationDefaults.AuthenticationType);
             return Ok();
         }
