@@ -43,10 +43,10 @@ namespace RentApp.Controllers
 
 
         // GET: api/AppUsers pitati sutra
-        //public IQueryable<AppUser> GetAppUsers()
-        //{
-        //    return db.AppUsers.GetAll();
-        //}
+        public IEnumerable<AppUser> GetAppUsers()
+        {
+            return db.AppUsers.GetAll();
+        }
 
         // GET: api/AppUsers/5[HttpGet]
         [HttpGet]
@@ -85,7 +85,7 @@ namespace RentApp.Controllers
                 return BadRequest();
             }
 
-            //db.Entry(appUser).State = EntityState.Modified;
+            db.AppUsers.Update(appUser);
 
             try
             {

@@ -35,20 +35,16 @@ namespace RentApp.Controllers
     {
         private const string LocalLoginProvider = "Local";
 
-        private RADBContext ra { get; set; } = new RADBContext();
+        //private RADBContext ra { get; set; } = new RADBContext();
 
-        //private IUnitOfWork db { get; set; } 
-
-        public AccountController(IUnitOfWork db)
-        {
-            //this.db = db;//ovde ne pozove
-        }
+        private IUnitOfWork db { get; set; } 
 
         public AccountController(ApplicationUserManager userManager,
-            ISecureDataFormat<AuthenticationTicket> accessTokenFormat)
+            ISecureDataFormat<AuthenticationTicket> accessTokenFormat, IUnitOfWork db)
         {
             UserManager = userManager;
             AccessTokenFormat = accessTokenFormat;
+            this.db = db;//ovde ne pozove
         }
 
         public ApplicationUserManager UserManager { get; private set; }
@@ -325,7 +321,7 @@ namespace RentApp.Controllers
         // POST api/Account/Register
         [AllowAnonymous]
         [Route("Register")]
-        public async Task<IHttpActionResult> Register(RegisterBindingModel model)
+        public  IHttpActionResult Register(RegisterBindingModel model)
         {
             if (!ModelState.IsValid)
             {
@@ -337,42 +333,22 @@ namespace RentApp.Controllers
             //
             //new AppUser() { Username = model.Username, FullName = model.Name + " " + model.Surname }
 
-            if (ra.AppUsers.FirstOrDefault(x => x.Username == model.Username) != null)
+            if (db.AppUsers.Find(x => x.Username == model.Username).Count() != 0)
             {
-                return NotFound();
+                return BadRequest("Ovaj username vec postoji");
             }
 
-            ra.AppUsers.Add(new AppUser { Approved = false, BirthDate = enteredDate, CreateService = false, Surname = model.Surname, LoggedIn = false, Name = model.Name, Username = model.Username, Contact = model.Contact });
+            AppUser appUser = new AppUser { Approved = false, BirthDate = enteredDate, CreateService = false, Surname = model.Surname, LoggedIn = false, Name = model.Name, Username = model.Username, Contact = model.Contact };
 
-            try
-            {
-                ra.SaveChanges();
-            }
-            catch (Exception ex)
-            {
-                return NotFound();
-            }
-            
-            
 
-            var appUser = ra.AppUsers.FirstOrDefault(x => x.Username == model.Username);
+            var userStore = new UserStore<RAIdentityUser>(new RADBContext());
+            var userManager = new UserManager<RAIdentityUser>(userStore);
 
-            if (appUser == null)
-            {
-                return NotFound();
-            }
+            var user = new RAIdentityUser() { UserName = model.Username, Email = model.Email, Id = model.Username, AppUser = appUser, PasswordHash = RAIdentityUser.HashPassword(model.Password) };
 
-            var user = new RAIdentityUser() { UserName = model.Username, Email = model.Email, Id = model.Username, AppUserId = appUser.Id };
 
-            IdentityResult result = await UserManager.CreateAsync(user, model.Password);
-
-            await UserManager.AddToRoleAsync(user.Id, "AppUser"); //proveri sa Lukicem
-            
-
-            if (!result.Succeeded)
-            {
-                return GetErrorResult(result);
-            }
+            userManager.Create(user);
+            userManager.AddToRole(user.Id, "AppUser");
 
             return Ok();
         }

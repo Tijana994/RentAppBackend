@@ -14,49 +14,49 @@ using RentApp.Repo;
 
 namespace RentApp.Controllers
 {
-    public class ServicesController : ApiController
+    public class PicsController : ApiController
     {
         private IUnitOfWork db;
 
-        public ServicesController(IUnitOfWork db)
+        public PicsController(IUnitOfWork db)
         {
             this.db = db;
         }
 
-        // GET: api/Services
-        public IEnumerable<Service> GetServices()
+        // GET: api/Pics
+        public IEnumerable<Pic> GetPics()
         {
-            return db.Services.GetAll();
+            return db.Pics.GetAll();
         }
 
-        // GET: api/Services/5
-        [ResponseType(typeof(Service))]
-        public IHttpActionResult GetService(int id)
+        // GET: api/Pics/5
+        [ResponseType(typeof(Pic))]
+        public IHttpActionResult GetPic(int id)
         {
-            Service service = db.Services.Get(id);
-            if (service == null)
+            Pic pic = db.Pics.Get(id);
+            if (pic == null)
             {
                 return NotFound();
             }
 
-            return Ok(service);
+            return Ok(pic);
         }
 
-        // PUT: api/Services/5
+        // PUT: api/Pics/5
         [ResponseType(typeof(void))]
-        public IHttpActionResult PutService(int id, Service service)
+        public IHttpActionResult PutPic(int id, Pic pic)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (id != service.Id)
+            if (id != pic.Id)
             {
                 return BadRequest();
             }
 
-            db.Services.Update(service);
+            db.Pics.Update(pic);
 
             try
             {
@@ -64,7 +64,7 @@ namespace RentApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ServiceExists(id))
+                if (!PicExists(id))
                 {
                     return NotFound();
                 }
@@ -77,35 +77,35 @@ namespace RentApp.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
-        // POST: api/Services
-        [ResponseType(typeof(Service))]
-        public IHttpActionResult PostService(Service service)
+        // POST: api/Pics
+        [ResponseType(typeof(Pic))]
+        public IHttpActionResult PostPic(Pic pic)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            db.Services.Add(service);
+            db.Pics.Add(pic);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = service.Id }, service);
+            return CreatedAtRoute("DefaultApi", new { id = pic.Id }, pic);
         }
 
-        // DELETE: api/Services/5
-        [ResponseType(typeof(Service))]
-        public IHttpActionResult DeleteService(int id)
+        // DELETE: api/Pics/5
+        [ResponseType(typeof(Pic))]
+        public IHttpActionResult DeletePic(int id)
         {
-            Service service = db.Services.Get(id);
-            if (service == null)
+            Pic pic = db.Pics.Get(id);
+            if (pic == null)
             {
                 return NotFound();
             }
 
-            db.Services.Remove(service);
+            db.Pics.Remove(pic);
             db.SaveChanges();
 
-            return Ok(service);
+            return Ok(pic);
         }
 
         protected override void Dispose(bool disposing)
@@ -117,9 +117,9 @@ namespace RentApp.Controllers
             base.Dispose(disposing);
         }
 
-        private bool ServiceExists(int id)
+        private bool PicExists(int id)
         {
-            return db.Services.FirstOrDefault(e => e.Id == id) != null;
+            return db.Pics.FirstOrDefault(e => e.Id == id) != null;
         }
     }
 }
