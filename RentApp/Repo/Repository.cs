@@ -64,5 +64,10 @@ namespace RentApp.Repo
         {
             return Context.Set<TEntity>().FirstOrDefault(expression);
         }
+
+        public bool Any(Expression<Func<TEntity, bool>> expression)
+        {
+            return Context.Set<TEntity>().Any(expression);
+        }
     }
 }

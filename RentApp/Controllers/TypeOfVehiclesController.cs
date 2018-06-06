@@ -14,6 +14,7 @@ using RentApp.Repo;
 
 namespace RentApp.Controllers
 {
+    [RoutePrefix("api/TypeOfVehicle")]
     public class TypeOfVehiclesController : ApiController
     {
         private IUnitOfWork db { get; set; }
@@ -85,6 +86,7 @@ namespace RentApp.Controllers
         // POST: api/TypeOfVehicles
         [HttpPost]
         [Authorize(Roles = "Admin")]
+        [Route("PostTypeOfVehicle")]
         [ResponseType(typeof(TypeOfVehicle))]
         public IHttpActionResult PostTypeOfVehicle(TypeOfVehicle typeOfVehicle)
         {
@@ -93,10 +95,23 @@ namespace RentApp.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (db.TypeOfVehicles.Any(x => x.Name == typeOfVehicle.Name))
+            {
+                return BadRequest("Name already exists");
+            }
             db.TypeOfVehicles.Add(typeOfVehicle);
-            db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = typeOfVehicle.Id }, typeOfVehicle);
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Internal error, try again");
+            }
+           
+
+            return Ok();
         }
 
         // DELETE: api/TypeOfVehicles/5

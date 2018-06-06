@@ -22,6 +22,7 @@ namespace RentApp.Repo
         void Update(TEntity entity);
 
         TEntity FirstOrDefault(Expression<Func<TEntity, bool>> expression);
+        bool Any(Expression<Func<TEntity, bool>> expression);
     }
 
     
