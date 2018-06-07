@@ -25,6 +25,9 @@ namespace RentApp.Controllers
         }
 
         // GET: api/Pics
+        [HttpGet]
+        [Route("GetAllPics")]
+        [ResponseType(typeof(Pic))]
         public IEnumerable<Pic> GetPics()
         {
             return db.Pics.GetAll();
@@ -104,7 +107,7 @@ namespace RentApp.Controllers
         // DELETE: api/Pics/5
         [HttpDelete]
         [Authorize]
-        [Route("DeletePic")]
+        [Route("DeletePic/{id}")]
         [ResponseType(typeof(Pic))]
         public IHttpActionResult DeletePic(int id)
         {

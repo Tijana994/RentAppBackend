@@ -133,7 +133,7 @@ namespace RentApp.Controllers
         // DELETE: api/AppUsers/5
         [HttpDelete]
         [Authorize(Roles = "Admin")]
-        [Route("DeleteAppUser")]
+        [Route("DeleteAppUser/{id}")]
         [ResponseType(typeof(AppUser))]
         public IHttpActionResult DeleteAppUser(int id)
         {
