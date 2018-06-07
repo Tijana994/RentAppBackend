@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RentApp.Persistance;
+using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.Data.Entity.Migrations;
@@ -57,9 +58,9 @@ namespace RentApp.Repo
 
         public void Update(TEntity entity)
         {
-            // Context.Set<TEntity>().Attach(entity);
+            //Context.Set<TEntity>().Attach(entity);
             //Context.Entry(entity).State = EntityState.Detached;
-            //Context.Entry(entity).State = EntityState.Modified;
+            //(Context as RADBContext).Entry<TEntity>(entity).State = EntityState.Modified;
             Context.Set<TEntity>().AddOrUpdate(entity);
         }
 

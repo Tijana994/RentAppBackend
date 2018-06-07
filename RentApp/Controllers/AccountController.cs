@@ -75,7 +75,7 @@ namespace RentApp.Controllers
             var user = db.AppUsers.Get(id);
 
 
-            if(user == null)
+            if (user == null)
             {
                 return BadRequest();
             }
@@ -136,6 +136,8 @@ namespace RentApp.Controllers
         }
 
         // POST api/Account/ChangePassword
+        [HttpPost]
+        [Authorize]
         [Route("ChangePassword")]
         public async Task<IHttpActionResult> ChangePassword(ChangePasswordBindingModel model)
         {
@@ -146,7 +148,7 @@ namespace RentApp.Controllers
 
             IdentityResult result = await UserManager.ChangePasswordAsync(User.Identity.GetUserId(), model.OldPassword,
                 model.NewPassword);
-            
+
             if (!result.Succeeded)
             {
                 return GetErrorResult(result);
@@ -359,7 +361,7 @@ namespace RentApp.Controllers
                 return BadRequest("Ovaj username vec postoji");
             }
 
-            AppUser appUser = new AppUser { Approved = false, BirthDate = enteredDate, CreateService = false, Surname = model.Surname, LoggedIn = false, Name = model.Name, Username = model.Username, Contact = model.Contact };
+            AppUser appUser = new AppUser { Approved = false, BirthDate = enteredDate, CreateService = model.CreateService, Surname = model.Surname, LoggedIn = false, Name = model.Name, Username = model.Username, Contact = model.Contact };
 
 
             var userStore = new UserStore<RAIdentityUser>(new RADBContext());
@@ -369,7 +371,15 @@ namespace RentApp.Controllers
 
 
             userManager.Create(user);
-            userManager.AddToRole(user.Id, "AppUser");
+            if (model.CreateService)
+            {
+                userManager.AddToRole(user.Id, "Manager");
+            }
+            else
+            {
+                userManager.AddToRole(user.Id, "AppUser");
+            }
+            
 
             return Ok();
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RentApp.Repo;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -12,10 +13,16 @@ namespace RentApp.Controllers
     [RoutePrefix("api/Upload")]
     public class UploadController : ApiController
     {
+        private IUnitOfWork db;
 
-        [Route("user/PostUserImage/{username}")]
+        public UploadController(IUnitOfWork db)
+        {
+            this.db = db;
+        }
+        [HttpPost]
+        [Route("PostUserImage/{id}")]
         [Authorize]
-        public async Task<HttpResponseMessage> PostUserImage(string username)
+        public IHttpActionResult PostUserImage(int id)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
             try
@@ -23,10 +30,15 @@ namespace RentApp.Controllers
 
                 var httpRequest = HttpContext.Current.Request;
 
+                if (!db.AppUsers.Any(x => x.Id == id))
+                {
+                    return BadRequest("Id is wrong");
+                }
+
                 foreach (string file in httpRequest.Files)
                 {
                     HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created);
-
+                    string filePath = "";
                     var postedFile = httpRequest.Files[file];
                     if (postedFile != null && postedFile.ContentLength > 0)
                     {
@@ -40,9 +52,8 @@ namespace RentApp.Controllers
                         {
 
                             var message = string.Format("Please Upload image of type .jpg,.gif,.png.");
-
                             dict.Add("error", message);
-                            return Request.CreateResponse(HttpStatusCode.BadRequest, dict);
+                            return BadRequest("Please Upload image of type .jpg,.gif,.png.");
                         }
                         else if (postedFile.ContentLength > MaxContentLength)
                         {
@@ -50,14 +61,12 @@ namespace RentApp.Controllers
                             var message = string.Format("Please Upload a file upto 2 mb.");
 
                             dict.Add("error", message);
-                            return Request.CreateResponse(HttpStatusCode.BadRequest, dict);
+                            return BadRequest("Please Upload a file upto 2 mb");
                         }
                         else
                         {
 
-
-
-                            var filePath = HttpContext.Current.Server.MapPath("~/Images/ImagesUsers/" + username + "_" +postedFile.FileName + extension);
+                            filePath = HttpContext.Current.Server.MapPath("~/Images/ImageUsers/" + db.AppUsers.Get(id).Username + "_" +postedFile.FileName);
 
                             postedFile.SaveAs(filePath);
 
@@ -65,17 +74,27 @@ namespace RentApp.Controllers
                     }
 
                     var message1 = string.Format("Image Updated Successfully.");
-                    return Request.CreateErrorResponse(HttpStatusCode.Created, message1); ;
+                    try
+                    {
+                        db.AppUsers.Get(id).Path = filePath;
+                        db.SaveChanges();
+                    }
+                    catch(Exception ex) {
+
+                        return BadRequest("Somebody already change picture");
+                    }
+
+                    return Ok(filePath);
                 }
                 var res = string.Format("Please Upload a image.");
                 dict.Add("error", res);
-                return Request.CreateResponse(HttpStatusCode.NotFound, dict);
+                return BadRequest();
             }
             catch (Exception ex)
             {
                 var res = string.Format("error");
                 dict.Add("error", res);
-                return Request.CreateResponse(HttpStatusCode.NotFound, dict);
+                return BadRequest();
             }
         }
 

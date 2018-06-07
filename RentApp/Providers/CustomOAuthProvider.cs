@@ -44,12 +44,14 @@ namespace RentApp.Providers
                 return;
             }
 
+            context.OwinContext.Response.Headers.Add("Email", new[] { user.Email });
+
             //if (!user.EmailConfirmed)
             //{
             //    context.SetError("invalid_grant", "AppUser did not confirm email.");
             //    return;
             //}
-            
+
 
             if (await userManager.IsInRoleAsync(user.UserName, "Admin"))
             {
@@ -68,7 +70,8 @@ namespace RentApp.Providers
                 }
             }
 
-            context.OwinContext.Response.Headers.Add("Access-Control-Expose-Headers", new[] { "Role" });
+            context.OwinContext.Response.Headers.Add("Access-Control-Expose-Headers", new[] { "Role","Email"});
+
 
 
             ClaimsIdentity oAuthIdentity = await user.GenerateUserIdentityAsync(userManager, "JWT");

@@ -19,6 +19,6 @@ namespace RentApp.Repo
             get { return Context as RADBContext; }
         }
 
-       
+     
     }
 }
