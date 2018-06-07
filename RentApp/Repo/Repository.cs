@@ -58,10 +58,10 @@ namespace RentApp.Repo
 
         public void Update(TEntity entity)
         {
-            //Context.Set<TEntity>().Attach(entity);
+            Context.Set<TEntity>().Attach(entity);
             //Context.Entry(entity).State = EntityState.Detached;
-            //(Context as RADBContext).Entry<TEntity>(entity).State = EntityState.Modified;
-            Context.Set<TEntity>().AddOrUpdate(entity);
+            Context.Entry<TEntity>(entity).State = EntityState.Modified;
+            //Context.Set<TEntity>().AddOrUpdate(entity);
         }
 
         public TEntity FirstOrDefault(Expression<Func<TEntity, bool>> expression)
@@ -72,6 +72,11 @@ namespace RentApp.Repo
         public bool Any(Expression<Func<TEntity, bool>> expression)
         {
             return Context.Set<TEntity>().Any(expression);
+        }
+
+        public IEnumerable<TEntity> AsNoTracking()
+        {
+            return Context.Set<TEntity>().AsNoTracking().ToList();
         }
     }
 }
