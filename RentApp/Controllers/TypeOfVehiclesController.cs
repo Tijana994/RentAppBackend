@@ -63,25 +63,26 @@ namespace RentApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (db.TypeOfVehicles.Get(id) == null)
-            {
-                return BadRequest();
-            }
+            /* if (db.TypeOfVehicles.Get(id) == null)
+             {
+                 return BadRequest();
+             }*/
 
             if (db.TypeOfVehicles.AsNoTracking().Any(x => x.Name.Equals(type.Name) && x.Id != type.Id))
             {
-                
+
                 return BadRequest("This name is not unique");
-                
-                
+
+
             }
 
 
-            
+
 
 
             try
             {
+                //type.RowVersion = db.AppUsers.AsNoTracking().FirstOrDefault(x => x.Id == type.Id).RowVersion;
                 db.TypeOfVehicles.Update(type);
                 db.SaveChanges();
             }
