@@ -25,6 +25,15 @@ namespace RentApp.Controllers
 
         }
 
+        // GET: api/Reservations
+        [HttpGet]
+        [Route("GetAllReservations")]
+        [ResponseType(typeof(Reservation))]
+        public IEnumerable<Reservation> GetReservations()
+        {
+            return db.Reservations.GetAll();
+        }
+
         // GET: api/Reservations/5
         [HttpGet]
         [Route("GetReservation/{id}")]
@@ -99,7 +108,7 @@ namespace RentApp.Controllers
         // DELETE: api/Reservations/5
         [HttpDelete]
         [Authorize]
-        [Route("DeleteReservation")]
+        [Route("DeleteReservation/{id}")]
         [ResponseType(typeof(Reservation))]
         public IHttpActionResult DeleteReservation(int id)
         {

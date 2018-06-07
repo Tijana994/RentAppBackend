@@ -25,6 +25,15 @@ namespace RentApp.Controllers
 
         }
 
+        // GET: api/PriceLists
+        [HttpGet]
+        [Route("GetAllPriceLists")]
+        [ResponseType(typeof(PriceList))]
+        public IEnumerable<PriceList> GetPriceLists()
+        {
+            return db.PriceLists.GetAll();
+        }
+
         // GET: api/PriceLists/5
         [HttpGet]
         [Route("GetPriceList/{id}")]
@@ -99,7 +108,7 @@ namespace RentApp.Controllers
         // DELETE: api/PriceLists/5
         [HttpDelete]
         [Authorize(Roles = "Manager")]
-        [Route("DeletePriceList")]
+        [Route("DeletePriceList/{id}")]
         [ResponseType(typeof(PriceList))]
         public IHttpActionResult DeletePriceList(int id)
         {

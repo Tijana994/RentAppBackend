@@ -25,6 +25,15 @@ namespace RentApp.Controllers
 
         }
 
+        // GET: api/Vehicles
+        [HttpGet]
+        [Route("GetAllVehicles")]
+        [ResponseType(typeof(Vehicle))]
+        public IEnumerable<Vehicle> GetVehicles()
+        {
+            return db.Vehicles.GetAll();
+        }
+
         // GET: api/Vehicles/5
         [HttpGet]
         [Route("GetVehicle/{id}")]
@@ -99,7 +108,7 @@ namespace RentApp.Controllers
         // DELETE: api/Vehicles/5
         [HttpDelete]
         [Authorize(Roles = "Manager")]
-        [Route("DeleteService")]
+        [Route("DeleteVehicle/{id}")]
         [ResponseType(typeof(Vehicle))]
         public IHttpActionResult DeleteVehicle(int id)
         {

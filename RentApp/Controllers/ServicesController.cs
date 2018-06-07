@@ -107,7 +107,7 @@ namespace RentApp.Controllers
         // DELETE: api/Services/5
         [HttpDelete]
         [Authorize(Roles = "Manager")]
-        [Route("DeleteService")]
+        [Route("DeleteService/{id}")]
         [ResponseType(typeof(Service))]
         public IHttpActionResult DeleteService(int id)
         {
