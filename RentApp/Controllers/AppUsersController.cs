@@ -24,7 +24,7 @@ namespace RentApp.Controllers
         public AppUsersController(IUnitOfWork db)
         {
             this.db = db;
-            
+
         }
 
         private ApplicationUserManager _userManager;
@@ -42,8 +42,11 @@ namespace RentApp.Controllers
         }
 
 
-        // GET: api/AppUsers pitati sutra
-        public IEnumerable<AppUser> GetAppUsers()
+        // GET: api/AppUsers 
+        [HttpGet]
+        [Route("GetAllUsers")]
+        [Authorize]
+        public IEnumerable<AppUser> GetAllUsers()
         {
             return db.AppUsers.GetAll();
         }
@@ -94,7 +97,7 @@ namespace RentApp.Controllers
             {
                 db.SaveChanges();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
                 if (!AppUserExists(id))
                 {
@@ -106,7 +109,7 @@ namespace RentApp.Controllers
                 }
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok();
         }
 
         // POST: api/AppUsers
@@ -145,7 +148,38 @@ namespace RentApp.Controllers
 
             return Ok(appUser);
         }
+        [HttpPut]
+        [Authorize(Roles = "Admin")]
+        [Route("Promotion")]
+        public IHttpActionResult Promotion(int id,bool service)
+        {
 
+            var user = db.AppUsers.Get(id);
+
+            if (user != null)
+            {
+                return BadRequest("User doesn`t exist");
+            }
+
+            user.CreateService = service;
+
+            try
+            {
+               
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest("Somebody already change user");
+            }
+
+
+
+            return Ok();
+
+
+        }
         protected override void Dispose(bool disposing)
         {
             if (disposing)
