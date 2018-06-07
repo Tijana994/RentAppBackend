@@ -53,7 +53,7 @@ namespace RentApp.Migrations
                         Description = c.String(nullable: false, maxLength: 200),
                         Contact = c.String(nullable: false, maxLength: 40),
                         AppUserId = c.Int(nullable: false),
-                        Path = c.String(nullable: false, maxLength: 200),
+                        Path = c.String(maxLength: 200),
                         Approved = c.Boolean(nullable: false),
                         AverageMark = c.Double(nullable: false),
                         AppUser_Id = c.Int(),

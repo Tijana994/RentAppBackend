@@ -97,10 +97,10 @@ namespace RentApp.Controllers
                 return BadRequest();
             }
         }
-
+        [HttpPost]
         [Route("car/PostCarImage/{carId}")]
         [Authorize]
-        public async Task<HttpResponseMessage> PostCarImage(string carId)
+        public HttpResponseMessage PostCarImage(string carId)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
             try
@@ -142,7 +142,7 @@ namespace RentApp.Controllers
 
 
 
-                            var filePath = HttpContext.Current.Server.MapPath("~/Images/ImagesCars/" + carId + "_" + postedFile.FileName + extension);
+                            var filePath = HttpContext.Current.Server.MapPath("~/Images/ImageCars/" + carId + "_" + postedFile.FileName + extension);
 
                             postedFile.SaveAs(filePath);
 
@@ -164,13 +164,21 @@ namespace RentApp.Controllers
             }
         }
 
-        [Route("service/PostServiceImage/{serviceName}")]
+        [HttpPost]
+        [Route("PostServiceImage/{id}")]
         [Authorize]
-        public async Task<HttpResponseMessage> PostServiceImage(string serviceName)
+        public IHttpActionResult PostServiceImage(int id)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
+
+            string filePath = "";
+            
             try
             {
+                if (!db.Services.Any(x => x.Id == id))
+                {
+                    return BadRequest("Id is wrong");
+                }
 
                 var httpRequest = HttpContext.Current.Request;
 
@@ -193,7 +201,7 @@ namespace RentApp.Controllers
                             var message = string.Format("Please Upload image of type .jpg,.gif,.png.");
 
                             dict.Add("error", message);
-                            return Request.CreateResponse(HttpStatusCode.BadRequest, dict);
+                            return BadRequest("Please Upload image of type .jpg,.gif,.png.");
                         }
                         else if (postedFile.ContentLength > MaxContentLength)
                         {
@@ -201,14 +209,14 @@ namespace RentApp.Controllers
                             var message = string.Format("Please Upload a file upto 2 mb.");
 
                             dict.Add("error", message);
-                            return Request.CreateResponse(HttpStatusCode.BadRequest, dict);
+                            return BadRequest("Please Upload a file upto 2 mb");
                         }
                         else
                         {
 
 
 
-                            var filePath = HttpContext.Current.Server.MapPath("~/Images/ImagesServices/" + serviceName + "_" + postedFile.FileName + extension);
+                            filePath = HttpContext.Current.Server.MapPath("~/Images/ImageServices/" + db.Services.Get(id).Name + "_" + postedFile.FileName);
 
                             postedFile.SaveAs(filePath);
 
@@ -216,17 +224,28 @@ namespace RentApp.Controllers
                     }
 
                     var message1 = string.Format("Image Updated Successfully.");
-                    return Request.CreateErrorResponse(HttpStatusCode.Created, message1); ;
+                    try
+                    {
+                        db.Services.Get(id).Path = filePath;
+                        db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+
+                        return BadRequest("Somebody already change picture");
+                    }
+
+                    return Ok(filePath);
                 }
                 var res = string.Format("Please Upload a image.");
                 dict.Add("error", res);
-                return Request.CreateResponse(HttpStatusCode.NotFound, dict);
+                return BadRequest();
             }
             catch (Exception ex)
             {
                 var res = string.Format("error");
                 dict.Add("error", res);
-                return Request.CreateResponse(HttpStatusCode.NotFound, dict);
+                return BadRequest();
             }
         }
     }

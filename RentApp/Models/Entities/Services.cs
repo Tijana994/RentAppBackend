@@ -26,12 +26,11 @@ namespace RentApp.Models.Entities
         [StringLength(40)]
         public string Contact { get; set; }
 
-        [Required]
         [ForeignKey("AppUser")]
         public int AppUserId { get; set; }
         public AppUser AppUser { get; set; }
 
-        [Required]
+        
         [StringLength(200)]
         public string Path { get; set; } //format : idServisa_Logo
         [Required]

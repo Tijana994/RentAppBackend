@@ -97,11 +97,14 @@ namespace RentApp.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            if (db.Services.Any(x => x.Name == service.Name))
+            {
+                return BadRequest("Name already exists");
+            }
             db.Services.Add(service);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = service.Id }, service);
+            return Ok(db.Services.FirstOrDefault(x => x.Name == service.Name).Id);
         }
 
         // DELETE: api/Services/5
