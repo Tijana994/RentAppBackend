@@ -25,6 +25,9 @@ namespace RentApp.Controllers
         }
 
         // GET: api/Services
+        [HttpGet]
+        [Route("GetAllServices")]
+        [ResponseType(typeof(Service))]
         public IEnumerable<Service> GetServices()
         {
             return db.Services.GetAll();

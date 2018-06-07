@@ -25,6 +25,9 @@ namespace RentApp.Controllers
         }
 
         // GET: api/Branches
+        [HttpGet]
+        [Route("GetAllBranches")]
+        [ResponseType(typeof(Branch))]
         public IEnumerable<Branch> GetBranches()
         {
             return db.Branches.GetAll();
@@ -48,6 +51,7 @@ namespace RentApp.Controllers
         // PUT: api/Branches/5
         [HttpPut]
         [Authorize(Roles = "Manager")]
+        [Route("PutBranch/{id}")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutBranch(int id, Branch branch)
         {
@@ -103,6 +107,7 @@ namespace RentApp.Controllers
         // DELETE: api/Branches/5
         [HttpDelete]
         [Authorize(Roles = "Manager")]
+        [Route("DeleteBranch/{id}")]
         [ResponseType(typeof(Branch))]
         public IHttpActionResult DeleteBranch(int id)
         {
