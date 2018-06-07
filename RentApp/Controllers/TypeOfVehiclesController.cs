@@ -68,7 +68,7 @@ namespace RentApp.Controllers
                 return BadRequest();
             }
 
-            if (db.TypeOfVehicles.Any(x => x.Name.Equals(type.Name) && x.Id != type.Id))
+            if (db.TypeOfVehicles.AsNoTracking().Any(x => x.Name.Equals(type.Name) && x.Id != type.Id))
             {
                 
                 return BadRequest("This name is not unique");

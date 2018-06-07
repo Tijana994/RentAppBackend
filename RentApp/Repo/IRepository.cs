@@ -20,6 +20,7 @@ namespace RentApp.Repo
         void Remove(TEntity entity);
         void RemoveRange(IEnumerable<TEntity> entities);
         void Update(TEntity entity);
+        IEnumerable<TEntity> AsNoTracking();
 
         TEntity FirstOrDefault(Expression<Func<TEntity, bool>> expression);
         bool Any(Expression<Func<TEntity, bool>> expression);
