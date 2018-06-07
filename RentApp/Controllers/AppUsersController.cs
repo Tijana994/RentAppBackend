@@ -13,6 +13,8 @@ using Microsoft.AspNet.Identity.Owin;
 using RentApp.Models.Entities;
 
 using RentApp.Repo;
+using Microsoft.AspNet.Identity.EntityFramework;
+using RentApp.Persistance;
 
 namespace RentApp.Controllers
 {
@@ -191,6 +193,42 @@ namespace RentApp.Controllers
         private bool AppUserExists(int id)
         {
             return db.AppUsers.Find(e => e.Id == id).Count() > 0;
+        }
+
+        [HttpPut]
+        [Authorize(Roles = "Admin")]
+        [Route("ApproveUser/{id}")]
+        public IHttpActionResult ApproveUser(int id, bool approved)
+        {
+
+            var user = db.AppUsers.Get(id);
+
+            if (user != null)
+            {
+                return BadRequest("User doesn`t exist");
+            }
+
+            user.Approved = approved;
+
+            try
+            {
+                var userStore = new UserStore<RAIdentityUser>(new RADBContext()); 
+                var userManager = new UserManager<RAIdentityUser>(userStore);
+                string Email = userManager.FindByName(user.Username).Email;
+                HelperController.sendAccountConfirmationEmail(Email);
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest("Somebody already change user");
+            }
+
+
+
+            return Ok();
+
+
         }
     }
 }
