@@ -21,11 +21,11 @@ namespace RentApp.Models.Entities
         public DateTime EndDate { get; set; }
         [Required]
         public double TotalPrice { get; set; }
-        [Required]
+        
         [ForeignKey("AppUser")]
         public int AppUserId { get; set; } //FK
         public AppUser AppUser { get; set; }
-        [Required]
+       
         [ForeignKey("Vehicle")]
         public int VehicleId { get; set; } //FK
         public Vehicle Vehicle { get; set; }

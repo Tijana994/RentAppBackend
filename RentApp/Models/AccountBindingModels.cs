@@ -73,11 +73,16 @@ namespace RentApp.Models
         public string ConfirmPassword { get; set; }
     }
 
+   
+
     public class RegisterExternalBindingModel
     {
         [Required]
         [Display(Name = "Email")]
         public string Email { get; set; }
+        [Required]
+        [Display(Name = "Username")]
+        public string Username { get; set; }
     }
 
     public class RemoveLoginBindingModel

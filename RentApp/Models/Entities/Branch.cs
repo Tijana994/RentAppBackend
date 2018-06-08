@@ -21,10 +21,12 @@ namespace RentApp.Models.Entities
         [Required]
         [StringLength(60)]
         public string Address { get; set; }
-        [Required]
+        
         [ForeignKey("Service")]
         public int ServiceId { get; set; }
         public Service Service { get; set; }
+
+        public string Path { get; set; }
 
         public List<BranchReservation> BranchReservations { get; set; }
 

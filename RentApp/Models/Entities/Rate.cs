@@ -19,12 +19,12 @@ namespace RentApp.Models.Entities
         [StringLength(400)]
         public string Comment { get; set; }
 
-        [Required]
+        
         [ForeignKey("AppUser")]
         public int AppUserId { get; set; } //FK
         public AppUser AppUser { get; set; }
 
-        [Required]
+       
         [ForeignKey("Service")]
         public int ServiceId { get; set; }
         public Service Service { get; set; }
