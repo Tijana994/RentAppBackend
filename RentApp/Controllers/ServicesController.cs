@@ -52,7 +52,7 @@ namespace RentApp.Controllers
         [HttpPut]
         [Authorize(Roles = "Manager")]
         [Route("PutService")]
-        [ResponseType(typeof(void))]
+        [ResponseType(typeof(Service))]
         public IHttpActionResult PutService(int id, Service service)
         {
             if (!ModelState.IsValid)
@@ -71,26 +71,20 @@ namespace RentApp.Controllers
             {
                 db.SaveChanges();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!ServiceExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+
+                return BadRequest("Somebody already changed service");
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok(db.Services.Get(id));
         }
 
 
         [HttpPut]
         [Authorize(Roles = "Admin")]
         [Route("ApproveService/{id}")]
-        public IHttpActionResult ApproveService(int id, bool approved)
+        public IHttpActionResult ApproveService(int id)
         {
 
             if (!db.Services.AsNoTracking().Any(x => x.Id == id))
@@ -98,7 +92,7 @@ namespace RentApp.Controllers
                 return BadRequest("Bad id");
             }
 
-            db.Services.Get(id).Approved = approved;
+            db.Services.Get(id).Approved = true;
 
             try
             {
@@ -137,19 +131,25 @@ namespace RentApp.Controllers
         [HttpDelete]
         [Authorize(Roles = "Manager")]
         [Route("DeleteService/{id}")]
-        [ResponseType(typeof(Service))]
         public IHttpActionResult DeleteService(int id)
         {
             Service service = db.Services.Get(id);
             if (service == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             db.Services.Remove(service);
-            db.SaveChanges();
+            try
+            {
+                db.SaveChanges();
+            }
+            catch(Exception ex)
+            {
+                return BadRequest();
+            }
 
-            return Ok(service);
+            return Ok("Successfuly deleted service");
         }
 
         protected override void Dispose(bool disposing)

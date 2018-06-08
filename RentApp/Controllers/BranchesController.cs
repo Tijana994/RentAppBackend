@@ -33,6 +33,29 @@ namespace RentApp.Controllers
             return db.Branches.GetAll();
         }
 
+        [HttpGet]
+        [Route("GetAllBrancesOfService/{id}")]
+        [ResponseType(typeof(Branch))]
+        public IEnumerable<Branch> GetAllBrancesOfService(int id)
+        {
+            List<Branch> list = new List<Branch>();
+
+            if (db.Services.Any(x => x.Id == id))
+            {
+                return null;
+            }
+
+            foreach (var item in db.Branches.GetAll())
+            {
+                if (item.ServiceId == id)
+                {
+                    list.Add(item);
+                }
+            }
+
+
+            return list;
+        }
         // GET: api/Branches/5
         [HttpGet]
         [Route("GetBranch/{id}")]
