@@ -59,7 +59,7 @@ namespace RentApp.Repo
         public void Update(TEntity entity)
         {
             //Context.Entry(entity).State = EntityState.Detached;
-             //Context.Set<TEntity>().Attach(entity);
+            //Context.Set<TEntity>().Attach(entity);
             //
             //Context.Entry<TEntity>(entity).State = EntityState.Modified;
             Context.Set<TEntity>().AddOrUpdate(entity);
