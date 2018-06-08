@@ -10,6 +10,7 @@ using System.Web.Http;
 using System.Web.Http.Description;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
+using Microsoft.AspNet.Identity.Owin;
 using RentApp.Models.Entities;
 using RentApp.Persistance;
 using RentApp.Repo;
@@ -24,6 +25,20 @@ namespace RentApp.Controllers
         public ServicesController(IUnitOfWork db)
         {
             this.db = db;
+        }
+
+        private ApplicationUserManager _userManager;
+
+        public ApplicationUserManager UserManager
+        {
+            get
+            {
+                return _userManager ?? Request.GetOwinContext().GetUserManager<ApplicationUserManager>();
+            }
+            private set
+            {
+                _userManager = value;
+            }
         }
 
         // GET: api/Services
@@ -53,7 +68,7 @@ namespace RentApp.Controllers
         // PUT: api/Services/5
         [HttpPut]
         [Authorize(Roles = "Manager")]
-        [Route("PutService")]
+        [Route("PutService/{id}")]
         [ResponseType(typeof(Service))]
         public IHttpActionResult PutService(int id, Service service)
         {
@@ -65,6 +80,18 @@ namespace RentApp.Controllers
             if (id != service.Id)
             {
                 return BadRequest();
+            }
+
+            var user = db.AppUsers.FirstOrDefault(u => u.Username == User.Identity.Name);
+
+            if (service.AppUserId != user.Id)
+            {
+                return BadRequest("Service doesn`t exists");
+            }
+
+            if (db.Services.Any(x => x.Name == service.Name && x.Id != service.Id))
+            {
+                return BadRequest("Name must be unique");
             }
 
             db.Services.Update(service);

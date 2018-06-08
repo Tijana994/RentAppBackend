@@ -393,6 +393,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Images\ImageBranches\" />
     <Folder Include="Images\ImageCars\" />
     <Folder Include="Images\ImageServices\" />
     <Folder Include="Images\ImageUsers\" />

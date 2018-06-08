@@ -29,7 +29,6 @@ namespace RentApp.Controllers
 
         // GET: api/TypeOfVehicles
         [HttpGet]
-        [Authorize(Roles = "Admin")]
         [Route("GetAllTypeOfVehicles")]
         public IEnumerable<TypeOfVehicle> GetAllTypeOfVehicles()
         {
