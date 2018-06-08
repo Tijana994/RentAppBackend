@@ -193,17 +193,17 @@ namespace RentApp.Controllers
         [HttpPut]
         [Authorize(Roles = "Admin")]
         [Route("Promotion/{id}")]
-        public IHttpActionResult Promotion(int id,bool service)
+        public IHttpActionResult Promotion(int id,AppUser app)
         {
 
             var user = db.AppUsers.Get(id);
 
-            if (user != null)
+            if (user == null)
             {
                 return BadRequest("User doesn`t exist");
             }
 
-            user.CreateService = service;
+            user.CreateService = app.CreateService;
 
             try
             {
@@ -239,17 +239,17 @@ namespace RentApp.Controllers
         [HttpPut]
         [Authorize(Roles = "Admin")]
         [Route("ApproveUser/{id}")]
-        public IHttpActionResult ApproveUser(int id, bool approved)
+        public IHttpActionResult ApproveUser(int id, AppUser app)
         {
 
             var user = db.AppUsers.Get(id);
 
-            if (user != null)
+            if (user == null)
             {
                 return BadRequest("User doesn`t exist");
             }
 
-            user.Approved = approved;
+            user.Approved = app.Approved;
 
             try
             {

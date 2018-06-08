@@ -8,6 +8,8 @@ using System.Net;
 using System.Net.Http;
 using System.Web.Http;
 using System.Web.Http.Description;
+using Microsoft.AspNet.Identity;
+using Microsoft.AspNet.Identity.EntityFramework;
 using RentApp.Models.Entities;
 using RentApp.Persistance;
 using RentApp.Repo;
@@ -84,7 +86,7 @@ namespace RentApp.Controllers
         [HttpPut]
         [Authorize(Roles = "Admin")]
         [Route("ApproveService/{id}")]
-        public IHttpActionResult ApproveService(int id)
+        public IHttpActionResult ApproveService(int id, Service service)
         {
 
             if (!db.Services.AsNoTracking().Any(x => x.Id == id))
@@ -92,7 +94,7 @@ namespace RentApp.Controllers
                 return BadRequest("Bad id");
             }
 
-            db.Services.Get(id).Approved = true;
+            db.Services.Get(id).Approved = service.Approved;
 
             try
             {
@@ -103,8 +105,11 @@ namespace RentApp.Controllers
             {
                 return BadRequest("Somebody already changed this service");
             }
-
-            HelperController.sendServiceConfirmationEmail(db.Services.Get(id).Email, db.Services.Get(id).Name);
+            var userStore = new UserStore<RAIdentityUser>(new RADBContext());
+            var userManager = new UserManager<RAIdentityUser>(userStore);
+            AppUser userko = db.AppUsers.Get(db.Services.Get(id).AppUserId);
+            string Email = userManager.FindByName(userko.Username).Email;
+            HelperController.sendServiceConfirmationEmail(Email, db.Services.Get(id).Name);
 
             return Ok();
         }
