@@ -75,6 +75,7 @@ namespace RentApp.Migrations
                         Name = c.String(nullable: false, maxLength: 40),
                         Address = c.String(nullable: false, maxLength: 60),
                         ServiceId = c.Int(nullable: false),
+                        Path = c.String(),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Services", t => t.ServiceId, cascadeDelete: true)

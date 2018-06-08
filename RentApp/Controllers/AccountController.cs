@@ -66,6 +66,9 @@ namespace RentApp.Controllers
             };
         }
 
+
+
+
         // POST api/Account/Logout
         [HttpPost]
         [Route("Logout/{id}")]
@@ -339,6 +342,29 @@ namespace RentApp.Controllers
             }
 
             return logins;
+        }
+
+        [HttpPut]
+        [Authorize]
+        [Route("ChangeEmail")]
+        public async Task<IHttpActionResult> ChangeEmail(RegisterExternalBindingModel model)
+        {
+            
+
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            IdentityResult result = await UserManager.SetEmailAsync(User.Identity.GetUserId(),model.Email);
+
+            if (!result.Succeeded)
+            {
+                return GetErrorResult(result);
+            }
+
+            return Ok();
+            
         }
 
         // POST api/Account/Register

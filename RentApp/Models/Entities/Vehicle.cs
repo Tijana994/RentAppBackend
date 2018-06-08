@@ -29,14 +29,14 @@ namespace RentApp.Models.Entities
         [Required]
         public bool Aveliable;
 
-        [Required]
+        
         [ForeignKey("TypeOfVehicle")]
         public int TypeOfVehicleId { get; set; }
         public TypeOfVehicle TypeOfVehicle { get; set; }  //FK
 
         public List<Pic> Pics { get; set; }   //format jedne slike : idVozila_nazivSlike
 
-        [Required]
+        
         [ForeignKey("Service")]
         public int ServiceId { get; set; }
         public Service Service { get; set; }
