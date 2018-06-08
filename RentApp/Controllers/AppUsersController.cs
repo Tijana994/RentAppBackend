@@ -192,7 +192,7 @@ namespace RentApp.Controllers
         }
         [HttpPut]
         [Authorize(Roles = "Admin")]
-        [Route("Promotion")]
+        [Route("Promotion/{id}")]
         public IHttpActionResult Promotion(int id,bool service)
         {
 

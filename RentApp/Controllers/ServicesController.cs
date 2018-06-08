@@ -86,6 +86,32 @@ namespace RentApp.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+
+        [HttpPut]
+        [Authorize(Roles = "Admin")]
+        [Route("ApproveService/{id}")]
+        public IHttpActionResult ApproveService(int id, bool approved)
+        {
+
+            if (!db.Services.AsNoTracking().Any(x => x.Id == id))
+            {
+                return BadRequest("Bad id");
+            }
+
+            db.Services.Get(id).Approved = approved;
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Somebody already changed this service");
+            }
+
+            return Ok();
+        }
+
         // POST: api/Services
         [HttpPost]
         [Authorize(Roles = "Manager")]
