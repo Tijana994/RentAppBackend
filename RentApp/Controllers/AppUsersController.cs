@@ -253,10 +253,7 @@ namespace RentApp.Controllers
 
             try
             {
-                var userStore = new UserStore<RAIdentityUser>(new RADBContext()); 
-                var userManager = new UserManager<RAIdentityUser>(userStore);
-                string Email = userManager.FindByName(user.Username).Email;
-                HelperController.sendAccountConfirmationEmail(Email);
+                
                 db.SaveChanges();
             }
             catch (Exception ex)
@@ -265,7 +262,10 @@ namespace RentApp.Controllers
                 return BadRequest("Somebody already change user");
             }
 
-
+            var userStore = new UserStore<RAIdentityUser>(new RADBContext());
+            var userManager = new UserManager<RAIdentityUser>(userStore);
+            string Email = userManager.FindByName(user.Username).Email;
+            HelperController.sendAccountConfirmationEmail(Email);
 
             return Ok();
 

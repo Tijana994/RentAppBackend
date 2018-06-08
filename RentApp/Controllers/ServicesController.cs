@@ -96,12 +96,15 @@ namespace RentApp.Controllers
 
             try
             {
+               
                 db.SaveChanges();
             }
             catch (Exception ex)
             {
                 return BadRequest("Somebody already changed this service");
             }
+
+            HelperController.sendServiceConfirmationEmail(db.Services.Get(id).Email, db.Services.Get(id).Name);
 
             return Ok();
         }

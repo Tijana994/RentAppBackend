@@ -75,7 +75,6 @@ namespace RentApp.Controllers
         [HttpPut]
         [Authorize(Roles = "Manager")]
         [Route("PutBranch/{id}")]
-        [ResponseType(typeof(void))]
         public IHttpActionResult PutBranch(int id, Branch branch)
         {
             if (!ModelState.IsValid)
@@ -94,19 +93,12 @@ namespace RentApp.Controllers
             {
                 db.SaveChanges();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception ex)
             {
-                if (!BranchExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest("Somebody already changed Branch");
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            return Ok("Successfuly added new Branch");
         }
 
         // POST: api/Branches
@@ -122,28 +114,47 @@ namespace RentApp.Controllers
             }
 
             db.Branches.Add(branch);
-            db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = branch.Id }, branch);
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest("Somebody already changed Branch");
+
+            }
+            
+           
+
+            return Ok("Successfully added new Branch");
         }
 
         // DELETE: api/Branches/5
         [HttpDelete]
         [Authorize(Roles = "Manager")]
         [Route("DeleteBranch/{id}")]
-        [ResponseType(typeof(Branch))]
         public IHttpActionResult DeleteBranch(int id)
         {
             Branch branch = db.Branches.Get(id);
             if (branch == null)
             {
-                return NotFound();
+                return BadRequest("Bad id");
             }
 
-            db.Branches.Remove(branch);
-            db.SaveChanges();
+            try
+            {
+                db.Branches.Remove(branch);
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Somebody already delete Branch");
+            }
+            
 
-            return Ok(branch);
+            return Ok("Successfuly deleted Branch");
         }
 
         protected override void Dispose(bool disposing)
