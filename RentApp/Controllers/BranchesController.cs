@@ -113,6 +113,10 @@ namespace RentApp.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (db.Branches.Any(x => x.Name == branch.Name))
+            {
+                return BadRequest("Name should be unique");
+            }
             db.Branches.Add(branch);
 
             try
@@ -128,7 +132,7 @@ namespace RentApp.Controllers
             
            
 
-            return Ok("Successfully added new Branch");
+            return Ok(db.Branches.FirstOrDefault(x => x.Name==branch.Name));
         }
 
         // DELETE: api/Branches/5
