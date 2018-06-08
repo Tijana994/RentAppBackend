@@ -53,6 +53,47 @@ namespace RentApp.Controllers
             return db.AppUsers.GetAll();
         }
 
+        [HttpGet]
+        [Route("GetAllAppUsers")]
+        [Authorize]
+        public IEnumerable<AppUser> GetAllAppUsers()
+        {
+
+            List<AppUser> appUsers = new List<AppUser>();
+
+            foreach (var item in db.AppUsers.GetAll())
+            {
+                var userpom = UserManager.FindByName(item.Username);
+                if(UserManager.IsInRole(userpom.Id, "AppUser"))
+                {
+                    appUsers.Add(item);
+                }
+            }
+
+            return appUsers;
+        }
+
+        [HttpGet]
+        [Route("GetAllManagers")]
+        [Authorize]
+        public IEnumerable<AppUser> GetAllManagers()
+        {
+
+            List<AppUser> appUsers = new List<AppUser>();
+
+            foreach (var item in db.AppUsers.GetAll())
+            {
+                var userpom = UserManager.FindByName(item.Username);
+                if (UserManager.IsInRole(userpom.Id, "Manager"))
+                {
+                    appUsers.Add(item);
+                }
+            }
+
+            return appUsers;
+        }
+
+
         // GET: api/AppUsers/5[HttpGet]
         [HttpGet]
         [Route("GetAppUser/{username}")]
