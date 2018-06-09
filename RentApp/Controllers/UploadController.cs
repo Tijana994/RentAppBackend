@@ -299,10 +299,10 @@ namespace RentApp.Controllers
                         }
                         else
                         {
+                            var branch = db.Branches.Get(id);
+                            var service = db.Services.Get(branch.ServiceId);
 
-
-
-                            filePath = HttpContext.Current.Server.MapPath("~/Images/ImageBranches/" + "_" + db.Branches.Get(id).Service.Name +"_" + db.Branches.Get(id).Name + "_" + postedFile.FileName);
+                            filePath = HttpContext.Current.Server.MapPath("~/Images/ImageBranches/"  + service.Name +"_" + branch.Name + "_" + postedFile.FileName);
 
                             postedFile.SaveAs(filePath);
 
