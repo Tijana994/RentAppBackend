@@ -1,4 +1,5 @@
-﻿using RentApp.Repo;
+﻿using RentApp.Models.Entities;
+using RentApp.Repo;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -98,13 +99,20 @@ namespace RentApp.Controllers
             }
         }
         [HttpPost]
-        [Route("car/PostCarImage/{carId}")]
+        [Route("car/PostCarImage/{id}")]
         [Authorize]
-        public HttpResponseMessage PostCarImage(string carId)
+        public IHttpActionResult PostCarImage(int id)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
+
+            string filePath = "";
+
             try
             {
+                if (!db.Vehicles.Any(x => x.Id == id))
+                {
+                    return BadRequest("Id is wrong");
+                }
 
                 var httpRequest = HttpContext.Current.Request;
 
@@ -127,7 +135,7 @@ namespace RentApp.Controllers
                             var message = string.Format("Please Upload image of type .jpg,.gif,.png.");
 
                             dict.Add("error", message);
-                            return Request.CreateResponse(HttpStatusCode.BadRequest, dict);
+                            return BadRequest("Please Upload image of type .jpg,.gif,.png.");
                         }
                         else if (postedFile.ContentLength > MaxContentLength)
                         {
@@ -135,32 +143,47 @@ namespace RentApp.Controllers
                             var message = string.Format("Please Upload a file upto 2 mb.");
 
                             dict.Add("error", message);
-                            return Request.CreateResponse(HttpStatusCode.BadRequest, dict);
+                            return BadRequest("Please Upload a file upto 2 mb");
                         }
                         else
                         {
+                            var car = db.Vehicles.Get(id);
+                            var service = db.Services.Get(car.ServiceId);
 
-
-
-                            var filePath = HttpContext.Current.Server.MapPath("~/Images/ImageCars/" + carId + "_" + postedFile.FileName + extension);
+                            filePath = HttpContext.Current.Server.MapPath("~/Images/ImageCars/" + service.Name + "_" + car.Id + "_" + postedFile.FileName);
 
                             postedFile.SaveAs(filePath);
 
                         }
                     }
 
-                    var message1 = string.Format("Image Updated Successfully.");
-                    return Request.CreateErrorResponse(HttpStatusCode.Created, message1); ;
+                    var message1 = string.Format("Image Updated Successfully."); 
+
+                    try
+                    {
+                        Pic pic = new Models.Entities.Pic();
+                        pic.Path = filePath;
+                        pic.VehicleId = id;
+                        db.Vehicles.Get(id).Pics.Add(pic);
+                        db.SaveChanges();
+                    }
+                    catch (Exception ex)
+                    {
+
+                        return BadRequest("Somebody already change picture");
+                    }
+
+                    return Ok(filePath);
                 }
                 var res = string.Format("Please Upload a image.");
                 dict.Add("error", res);
-                return Request.CreateResponse(HttpStatusCode.NotFound, dict);
+                return BadRequest();
             }
             catch (Exception ex)
             {
                 var res = string.Format("error");
                 dict.Add("error", res);
-                return Request.CreateResponse(HttpStatusCode.NotFound, dict);
+                return BadRequest();
             }
         }
 
