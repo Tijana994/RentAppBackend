@@ -1,4 +1,5 @@
-﻿using RentApp.Models.Entities;
+﻿
+using RentApp.Models.Entities;
 using RentApp.Persistance;
 using System;
 using System.Collections.Generic;
@@ -14,9 +15,11 @@ namespace RentApp.Repo
         {
         }
 
-        public DbContext ApplicationDbContext
+        protected RADBContext ApplicationDbContext { get { return Context as RADBContext; } }
+
+        public IEnumerable<Vehicle> GetAll(int pageIndex, int pageSize)
         {
-            get { return Context as DbContext; }
+            return ApplicationDbContext.Vehicles.Skip((pageIndex - 1) * pageSize).Take(pageSize);
         }
     }
 }

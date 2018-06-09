@@ -98,11 +98,12 @@ namespace RentApp.Controllers
             {
                 return BadRequest(ModelState);
             }
-
+            
             db.Vehicles.Add(vehicle);
+ 
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = vehicle.Id }, vehicle);
+            return Ok(vehicle);
         }
 
         // DELETE: api/Vehicles/5

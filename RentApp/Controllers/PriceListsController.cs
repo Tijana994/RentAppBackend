@@ -99,10 +99,11 @@ namespace RentApp.Controllers
                 return BadRequest(ModelState);
             }
 
+            priceList.StartDate = DateTime.Now;
             db.PriceLists.Add(priceList);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = priceList.Id }, priceList);
+            return Ok();
         }
 
         // DELETE: api/PriceLists/5

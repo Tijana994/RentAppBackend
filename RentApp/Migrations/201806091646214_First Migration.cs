@@ -131,6 +131,7 @@ namespace RentApp.Migrations
                         Model = c.String(nullable: false, maxLength: 40),
                         Year = c.Int(nullable: false),
                         Description = c.String(nullable: false, maxLength: 40),
+                        Avaliable = c.Boolean(nullable: false),
                         TypeOfVehicleId = c.Int(nullable: false),
                         ServiceId = c.Int(nullable: false),
                     })

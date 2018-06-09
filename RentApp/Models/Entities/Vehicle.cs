@@ -27,7 +27,7 @@ namespace RentApp.Models.Entities
         public string Description { get; set; }
 
         [Required]
-        public bool Avaliable;
+        public bool Avaliable { get; set; }
 
         
         [ForeignKey("TypeOfVehicle")]

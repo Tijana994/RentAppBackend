@@ -10,5 +10,6 @@ namespace RentApp.Repo
     public interface IVehicleRepository: IRepository<Vehicle>
     {
         // to do
+        IEnumerable<Vehicle> GetAll(int pageIndex, int pageSize);
     }
 }
