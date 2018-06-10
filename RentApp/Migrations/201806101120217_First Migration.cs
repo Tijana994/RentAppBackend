@@ -131,15 +131,21 @@ namespace RentApp.Migrations
                         Model = c.String(nullable: false, maxLength: 40),
                         Year = c.Int(nullable: false),
                         Description = c.String(nullable: false, maxLength: 40),
-                        Avaliable = c.Boolean(nullable: false),
+                        Available = c.Boolean(nullable: false),
                         TypeOfVehicleId = c.Int(nullable: false),
                         ServiceId = c.Int(nullable: false),
+                        TypeOfVehicle_Id = c.Int(),
+                        Service_Id = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Services", t => t.ServiceId, cascadeDelete: true)
+                .ForeignKey("dbo.TypeOfVehicles", t => t.TypeOfVehicle_Id)
                 .ForeignKey("dbo.TypeOfVehicles", t => t.TypeOfVehicleId, cascadeDelete: true)
+                .ForeignKey("dbo.Services", t => t.Service_Id)
                 .Index(t => t.TypeOfVehicleId)
-                .Index(t => t.ServiceId);
+                .Index(t => t.ServiceId)
+                .Index(t => t.TypeOfVehicle_Id)
+                .Index(t => t.Service_Id);
             
             CreateTable(
                 "dbo.Pics",
@@ -166,7 +172,7 @@ namespace RentApp.Migrations
                         Vehicle_Id = c.Int(),
                     })
                 .PrimaryKey(t => t.Id)
-                .ForeignKey("dbo.Vehicles", t => t.Vehicle_Id)
+                .ForeignKey("dbo.Vehicles", t => t.Vehicle_Id, cascadeDelete: true)
                 .Index(t => t.Vehicle_Id);
             
             CreateTable(
@@ -261,11 +267,13 @@ namespace RentApp.Migrations
             DropForeignKey("dbo.AspNetUserRoles", "RoleId", "dbo.AspNetRoles");
             DropForeignKey("dbo.Services", "AppUser_Id", "dbo.AppUsers");
             DropForeignKey("dbo.Rates", "ServiceId", "dbo.Services");
+            DropForeignKey("dbo.Vehicles", "Service_Id", "dbo.Services");
             DropForeignKey("dbo.Branches", "ServiceId", "dbo.Services");
             DropForeignKey("dbo.BranchReservations", "Branch_Id", "dbo.Branches");
             DropForeignKey("dbo.BranchReservations", "ReservationId", "dbo.Reservations");
             DropForeignKey("dbo.Reservations", "VehicleId", "dbo.Vehicles");
             DropForeignKey("dbo.Vehicles", "TypeOfVehicleId", "dbo.TypeOfVehicles");
+            DropForeignKey("dbo.Vehicles", "TypeOfVehicle_Id", "dbo.TypeOfVehicles");
             DropForeignKey("dbo.Vehicles", "ServiceId", "dbo.Services");
             DropForeignKey("dbo.PriceLists", "Vehicle_Id", "dbo.Vehicles");
             DropForeignKey("dbo.Pics", "VehicleId", "dbo.Vehicles");
@@ -283,6 +291,8 @@ namespace RentApp.Migrations
             DropIndex("dbo.AspNetRoles", "RoleNameIndex");
             DropIndex("dbo.PriceLists", new[] { "Vehicle_Id" });
             DropIndex("dbo.Pics", new[] { "VehicleId" });
+            DropIndex("dbo.Vehicles", new[] { "Service_Id" });
+            DropIndex("dbo.Vehicles", new[] { "TypeOfVehicle_Id" });
             DropIndex("dbo.Vehicles", new[] { "ServiceId" });
             DropIndex("dbo.Vehicles", new[] { "TypeOfVehicleId" });
             DropIndex("dbo.Reservations", new[] { "VehicleId" });

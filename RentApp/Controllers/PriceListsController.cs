@@ -99,6 +99,8 @@ namespace RentApp.Controllers
                 return BadRequest(ModelState);
             }
 
+            priceList.Vehicle = db.Vehicles.Get(priceList.VehicleId);
+
             priceList.StartDate = DateTime.Now;
             db.PriceLists.Add(priceList);
             db.SaveChanges();

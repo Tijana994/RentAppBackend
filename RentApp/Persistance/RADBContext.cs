@@ -55,10 +55,37 @@ namespace RentApp.Persistance
             .WithMany()
             .WillCascadeOnDelete(false);
 
-            builder.Entity<Service>()
+           builder.Entity<Service>()
             .HasRequired(c => c.AppUser)
             .WithMany()
             .WillCascadeOnDelete(false);
+
+           builder.Entity<Vehicle>()
+           .HasRequired(c => c.Service)
+           .WithMany()
+           .WillCascadeOnDelete(true);
+
+            builder.Entity<Vehicle>()
+           .HasRequired(c => c.TypeOfVehicle)
+           .WithMany()
+           .WillCascadeOnDelete(true);
+
+            /*builder.Entity<PriceList>()
+              .HasRequired(c => c.Vehicle)
+              .WithMany()
+              .WillCascadeOnDelete(true);*/
+
+            /*builder.Entity<Rate>()
+              .HasRequired(c => c.Service)
+              .WithMany()
+              .WillCascadeOnDelete(false);
+
+            builder.Entity<Rate>()
+              .HasRequired(c => c.AppUser)
+              .WithMany()
+              .WillCascadeOnDelete(false);*/
+
+
         }
     }
 }

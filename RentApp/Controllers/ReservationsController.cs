@@ -34,6 +34,26 @@ namespace RentApp.Controllers
             return db.Reservations.GetAll();
         }
 
+        [HttpGet]
+        [Authorize]
+        [Route("GetUserReservation/{id}")]
+        [ResponseType(typeof(Reservation))]
+        public IEnumerable<Reservation> GetUserReservation(int id)
+        {
+            List<Reservation> reservatons = new List<Reservation>();
+
+
+            foreach (var reservation in db.Reservations.Find(x => x.AppUserId == id))
+            {
+                reservation.BranchReservations.Add(db.BranchReservations.FirstOrDefault(x => x.ReservationId == reservation.Id && x.Reception == true));
+                reservation.BranchReservations.Add(db.BranchReservations.FirstOrDefault(x => x.ReservationId == reservation.Id && x.Reception == false));
+                reservatons.Add(reservation);
+            }
+
+            return reservatons;
+            
+        }
+
         // GET: api/Reservations/5
         [HttpGet]
         [Route("GetReservation/{id}")]
@@ -45,6 +65,9 @@ namespace RentApp.Controllers
             {
                 return NotFound();
             }
+
+            reservation.BranchReservations.Add(db.BranchReservations.FirstOrDefault(x => x.ReservationId == reservation.Id && x.Reception == true));
+            reservation.BranchReservations.Add(db.BranchReservations.FirstOrDefault(x => x.ReservationId == reservation.Id && x.Reception == false));
 
             return Ok(reservation);
         }
@@ -87,6 +110,77 @@ namespace RentApp.Controllers
             return StatusCode(HttpStatusCode.NoContent);
         }
 
+        [HttpPost]
+        [Authorize]
+        [Route("CheckReservation")]
+        public IHttpActionResult CheckReservation(Reservation reservation)
+        {
+            foreach (var item in db.Reservations.GetAll())
+            {
+
+                if (reservation.StartDate <= item.StartDate)
+                {
+                    if (reservation.EndDate >= item.StartDate && item.EndDate >= reservation.EndDate)
+                    {
+                        return BadRequest("zauzeto");
+                    }
+                    else if(reservation.EndDate >= item.EndDate )
+                    {
+                        return BadRequest("zauzeto");
+                    }
+
+                }
+                else
+                {
+                    if (reservation.EndDate <= item.EndDate)
+                    {
+                        return BadRequest("zauzeto");
+                    }
+                    else if (reservation.StartDate < item.EndDate && reservation.EndDate >= item.EndDate)
+                    {
+                        return BadRequest("zauzeto");
+                    }
+                }
+                
+              
+            }
+
+            double pricePerHour = GetPrice(reservation.VehicleId);
+            TimeSpan timeSpan = reservation.EndDate - reservation.StartDate;
+            double price = timeSpan.TotalHours * pricePerHour;
+            return Ok(price);
+        }
+
+
+        private double GetPrice(int id)
+        {
+            Vehicle vehicle = db.Vehicles.Get(id);
+            if (vehicle == null)
+            {
+                return 0;
+            }
+
+
+            PriceList price = null;
+
+            foreach (var item in vehicle.PriceLists)
+            {
+                if (item.StartDate < DateTime.Now && item.EndDate > DateTime.Now)
+                {
+                    price = item;
+                }
+            }
+
+            if (price == null)
+            {
+                price = vehicle.PriceLists.Last();
+            }
+
+
+
+            return price.Price;
+        }
+
         // POST: api/Reservations
         [HttpPost]
         [Authorize]
@@ -99,10 +193,72 @@ namespace RentApp.Controllers
                 return BadRequest(ModelState);
             }
 
+            foreach (var item in db.Reservations.GetAll())
+            {
+
+                if (reservation.StartDate <= item.StartDate)
+                {
+                    if (reservation.EndDate >= item.StartDate && item.EndDate >= reservation.EndDate)
+                    {
+                        return BadRequest("zauzeto");
+                    }
+                    else if (reservation.EndDate >= item.EndDate)
+                    {
+                        return BadRequest("zauzeto");
+                    }
+
+                }
+                else
+                {
+                    if (reservation.EndDate <= item.EndDate)
+                    {
+                        return BadRequest("zauzeto");
+                    }
+                    else if (reservation.StartDate < item.EndDate && reservation.EndDate >= item.EndDate)
+                    {
+                        return BadRequest("zauzeto");
+                    }
+                }
+
+
+            }
+
+            reservation.Vehicle = db.Vehicles.Get(reservation.VehicleId);
+
+            double pricePerHour = GetPrice(reservation.VehicleId);
+            TimeSpan timeSpan = reservation.EndDate - reservation.StartDate;
+            reservation.TotalPrice = timeSpan.TotalHours * pricePerHour;
+
+
+            BranchReservation reception = new BranchReservation();
+            reception.BranchId = reservation.BranchReservations.ElementAt(0).BranchId;
+            reception.Branch = db.Branches.Get(reception.BranchId);
+            reception.Reception = true;
+
+            BranchReservation returnto = new BranchReservation();
+            returnto.BranchId = reservation.BranchReservations.ElementAt(1).BranchId;
+            returnto.Branch = db.Branches.Get(returnto.BranchId);
+            returnto.Reception = false;
+
+            reservation.BranchReservations.Clear();
+
             db.Reservations.Add(reservation);
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = reservation.Id }, reservation);
+            reception.ReservationId = reservation.Id;
+            reception.Reservation = reservation;
+            returnto.ReservationId = reservation.Id;
+            returnto.Reservation = reservation;
+
+            db.BranchReservations.Add(reception);
+            db.BranchReservations.Add(returnto);
+
+            db.SaveChanges();
+
+            reservation.BranchReservations.Add(db.BranchReservations.FirstOrDefault(x => x.ReservationId == reservation.Id && x.Reception == true));
+            reservation.BranchReservations.Add(db.BranchReservations.FirstOrDefault(x => x.ReservationId == reservation.Id && x.Reception == false)); 
+
+            return Ok(reservation);
         }
 
         // DELETE: api/Reservations/5

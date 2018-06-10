@@ -52,20 +52,23 @@ namespace RentApp.Controllers
         // PUT: api/Vehicles/5
         [HttpPut]
         [Authorize(Roles = "Manager")]
-        [Route("PutVehicle")]
+        [Route("PutVehicle/{id}")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutVehicle(int id, Vehicle vehicle)
         {
-            if (!ModelState.IsValid)
+            vehicle.Service = db.Services.Get(vehicle.ServiceId);
+            vehicle.TypeOfVehicle = db.TypeOfVehicles.Get(vehicle.TypeOfVehicleId);
+           /* if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
+            }*/
 
             if (id != vehicle.Id)
             {
                 return BadRequest();
             }
 
+            
             db.Vehicles.Update(vehicle);
 
             try
@@ -74,18 +77,44 @@ namespace RentApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!VehicleExists(id))
+                return BadRequest();
+            }
+
+            return Ok();
+        }
+
+        [HttpGet]
+        [Route("GetPrice/{id}")]
+        [ResponseType(typeof(PriceList))]
+        public IHttpActionResult GetPrice(int id)
+        {
+            Vehicle vehicle = db.Vehicles.Get(id);
+            if (vehicle == null)
+            {
+                return BadRequest();
+            }
+
+
+            PriceList price = null;
+
+            foreach (var item in vehicle.PriceLists)
+            {
+                if (item.StartDate < DateTime.Now && item.EndDate > DateTime.Now)
                 {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
+                    price = item;
                 }
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            if (price == null)
+            {
+                price = vehicle.PriceLists.Last();
+            }
+
+
+
+            return Ok(price);
         }
+
 
         // POST: api/Vehicles
         [HttpPost]
@@ -94,14 +123,26 @@ namespace RentApp.Controllers
         [ResponseType(typeof(Vehicle))]
         public IHttpActionResult PostVehicle(Vehicle vehicle)
         {
-            if (!ModelState.IsValid)
+            vehicle.Available = true;
+            vehicle.Service = db.Services.Get(vehicle.ServiceId);
+            vehicle.TypeOfVehicle = db.TypeOfVehicles.Get(vehicle.TypeOfVehicleId);
+           /* if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
-            }
+            }*/
+
+           
             
             db.Vehicles.Add(vehicle);
- 
-            db.SaveChanges();
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+            
 
             return Ok(vehicle);
         }
@@ -116,13 +157,21 @@ namespace RentApp.Controllers
             Vehicle vehicle = db.Vehicles.Get(id);
             if (vehicle == null)
             {
-                return NotFound();
+                return BadRequest("Bad id");
             }
 
-            db.Vehicles.Remove(vehicle);
-            db.SaveChanges();
+            try
+            {
+                db.Vehicles.Remove(vehicle);
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest("Somebody already delete Vehicle");
+            }
 
-            return Ok(vehicle);
+
+            return Ok("Successfuly deleted Vehicle");
         }
 
         protected override void Dispose(bool disposing)
