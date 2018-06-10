@@ -13,7 +13,7 @@ namespace RentApp.Migrations
         
         string IMigrationMetadata.Id
         {
-            get { return "201806101120217_First Migration"; }
+            get { return "201806101936080_First Migration"; }
         }
         
         string IMigrationMetadata.Source

@@ -9,12 +9,14 @@ namespace RentApp.Models.Entities
 {
     public class BranchReservation
     {
-        [Key, Column(Order = 0)]
         [ForeignKey("Branch")]
         public int BranchId { get; set; }
-        [Key, Column(Order = 1)]
+
         [ForeignKey("Reservation")]
         public int ReservationId { get; set; }
+
+        [Key]
+        public int Id { get; set; }
 
         [Timestamp]
         public byte[] RowVersion { get; set; }

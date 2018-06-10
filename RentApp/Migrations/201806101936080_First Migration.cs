@@ -85,6 +85,7 @@ namespace RentApp.Migrations
                 "dbo.BranchReservations",
                 c => new
                     {
+                        Id = c.Int(nullable: false, identity: true),
                         BranchId = c.Int(nullable: false),
                         ReservationId = c.Int(nullable: false),
                         RowVersion = c.Binary(nullable: false, fixedLength: true, timestamp: true, storeType: "rowversion"),
@@ -92,7 +93,7 @@ namespace RentApp.Migrations
                         Reservation_Id = c.Int(),
                         Branch_Id = c.Int(),
                     })
-                .PrimaryKey(t => new { t.BranchId, t.ReservationId })
+                .PrimaryKey(t => t.Id)
                 .ForeignKey("dbo.Branches", t => t.BranchId)
                 .ForeignKey("dbo.Reservations", t => t.Reservation_Id)
                 .ForeignKey("dbo.Reservations", t => t.ReservationId)
