@@ -73,7 +73,18 @@ namespace RentApp.Models
         public string ConfirmPassword { get; set; }
     }
 
-   
+    public class Pagination
+    {
+
+        [Required]
+        [Display(Name = "PageIndex")]
+        public int PageIndex { get; set; }
+
+        [Required]
+        [Display(Name = "PageSize")]
+        public int PageSize { get; set; }
+
+    }
 
     public class RegisterExternalBindingModel
     {
