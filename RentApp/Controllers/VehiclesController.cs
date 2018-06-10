@@ -11,6 +11,7 @@ using System.Web.Http.Description;
 using RentApp.Models.Entities;
 using RentApp.Persistance;
 using RentApp.Repo;
+using RentApp.Models;
 
 namespace RentApp.Controllers
 {
@@ -47,6 +48,14 @@ namespace RentApp.Controllers
             }
 
             return Ok(vehicle);
+        }
+
+        [HttpGet]
+        [Route("Pagination/{pageNumber}/{pageSize}")]
+        [ResponseType(typeof(Vehicle))]
+        public ICollection<Vehicle> Pagination(int pageNumber, int pageSize)
+        {
+            return db.Vehicles.GetAll(pageNumber,pageSize).ToList();
         }
 
         // PUT: api/Vehicles/5

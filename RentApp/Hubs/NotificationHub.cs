@@ -7,6 +7,9 @@ using System.Web;
 using System.Web.UI;
 using Microsoft.AspNet.SignalR;
 using Microsoft.AspNet.SignalR.Hubs;
+using RentApp.Repo;
+using RentApp.Persistance;
+using RentApp.Models.Entities;
 
 namespace RentApp.Hubs
 {
@@ -14,9 +17,10 @@ namespace RentApp.Hubs
     [HubName("notifications")]
     public class NotificationHub : Hub
     {
+        private RADBContext db = new RADBContext();
         private static IHubContext hubContext = GlobalHost.ConnectionManager.GetHubContext<NotificationHub>();
         private static Timer t = new Timer();
-
+       
         public void Hello()
         {
             Clients.All.hello("Hello from server");
@@ -24,7 +28,7 @@ namespace RentApp.Hubs
 
         public static void Notify(string msg)
         {
-            //hubContext.Clients.Group("Admins").msgNotification(msg);
+            //hubContext.Clients.Group("Admins").msgNotification(msg); 
         }
 
         public void RegisterForNotification(string userId, string userRole)
@@ -32,7 +36,6 @@ namespace RentApp.Hubs
             if (userRole.Equals("Admin"))
             {
                 hubContext.Groups.Add(Context.ConnectionId, "Admins");
-
             }
         }
 
@@ -58,9 +61,25 @@ namespace RentApp.Hubs
 
         public void GetNotification()
         {
+            List<AppUser> listOfUser = db.AppUsers.ToList();
+            foreach (var user in listOfUser)
+            {
+                if (!user.Approved)
+                {
+                    hubContext.Clients.Group("Admins").clickNotification("There are unapproved users. Check them in admin panel.");
+                    break;
+                }
+            }
 
-                    hubContext.Clients.Group("Admins").clickNotification("aaaaaaaaaaaaaaaaaa");
-
+            List<Service> listOfServices = db.Services.ToList();
+            foreach (var service in listOfServices)
+            {
+                if (!service.Approved)
+                {
+                    hubContext.Clients.Group("Admins").clickNotification("There are unapproved services. Check them in admin panel.");
+                    break;
+                }
+            }
         }
 
         public override Task OnConnected()
