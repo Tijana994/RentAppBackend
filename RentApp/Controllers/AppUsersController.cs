@@ -110,6 +110,18 @@ namespace RentApp.Controllers
                     return NotFound();
                 }
                 appUser.LoggedIn = true;
+                
+                if (db.Reservations.Any(x => x.AppUserId == user.Id))
+                {
+                    List<Reservation> reservationsForUser = db.Reservations.Find(x => x.AppUserId == user.Id).ToList();
+                    foreach (var res in reservationsForUser)
+                    {
+                        if (res.EndDate < DateTime.Now)
+                        {
+                            res.Expired = true;
+                        }
+                    }
+                } 
                 db.SaveChanges();
                 return Ok(appUser);
             }
