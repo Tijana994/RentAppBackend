@@ -368,6 +368,7 @@ namespace RentApp.Controllers
         }
 
         // POST api/Account/Register
+        [HttpPost]
         [AllowAnonymous]
         [Route("Register")]
         public  IHttpActionResult Register(RegisterBindingModel model)
@@ -405,8 +406,8 @@ namespace RentApp.Controllers
             {
                 userManager.AddToRole(user.Id, "AppUser");
             }
-            
 
+            Hubs.NotificationHub.SendNotification("New client created account. To view his document, go to admin panel.");
             return Ok();
         }
 

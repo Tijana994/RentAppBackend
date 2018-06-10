@@ -14,6 +14,8 @@ namespace RentApp
         {
             ConfigureAuth(app);
             //app.UseCors(Microsoft.Owin.Cors);
+            app.UseCors(Microsoft.Owin.Cors.CorsOptions.AllowAll);
+            app.MapSignalR();
         }
     }
 }

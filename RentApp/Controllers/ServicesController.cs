@@ -158,7 +158,7 @@ namespace RentApp.Controllers
             }
             db.Services.Add(service);
             db.SaveChanges();
-
+            Hubs.NotificationHub.SendNotification("New service created. To preview it, go to admin panel.");
             return Ok(db.Services.FirstOrDefault(x => x.Name == service.Name).Id);
         }
 
