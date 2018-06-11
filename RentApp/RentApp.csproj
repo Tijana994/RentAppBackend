@@ -404,10 +404,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="Images\ImageBranches\" />
-    <Folder Include="Images\ImageCars\" />
-    <Folder Include="Images\ImageServices\" />
-    <Folder Include="Images\ImageUsers\" />
+    <Folder Include="Content\Images\ImageBranches\" />
+    <Folder Include="Content\Images\ImageCars\" />
+    <Folder Include="Content\Images\ImageServices\" />
+    <Folder Include="Content\Images\ImageUsers\" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
