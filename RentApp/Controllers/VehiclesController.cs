@@ -50,6 +50,29 @@ namespace RentApp.Controllers
             return Ok(vehicle);
         }
 
+        [HttpGet]
+        [Route("SetAvaiable/{id}")]
+        [Authorize(Roles = "Manager")]
+        public IHttpActionResult SetAvaiable(int id)
+        {
+            if (!db.Vehicles.Any(x => x.Id == id))
+            {
+                return BadRequest();
+
+            }
+
+            db.Vehicles.Get(id).Available = !db.Vehicles.Get(id).Available;
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest();
+            }
+            return Ok();
+        }
 
         [HttpGet]
         [Route("PaginationWithFilter")]

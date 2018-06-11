@@ -176,7 +176,10 @@ namespace RentApp.Controllers
 
             List<BranchReservation> pom = new List<BranchReservation>();
             List<Reservation> res = new List<Reservation>();
-            
+            List<Rate> rates = new List<Rate>();
+
+            rates = db.Rates.Find(x => x.ServiceId == id).ToList();
+
             foreach (var branch in db.Branches.Find(x => x.ServiceId == id))
             {
                 pom.AddRange(db.BranchReservations.Find(x => x.BranchId == branch.Id));
@@ -186,6 +189,8 @@ namespace RentApp.Controllers
             {
                 res.AddRange(db.Reservations.Find(x => x.VehicleId == item.Id));
             }
+
+            db.Rates.RemoveRange(rates);
 
 
             db.BranchReservations.RemoveRange(pom);

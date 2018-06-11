@@ -76,8 +76,10 @@ namespace RentApp.Controllers
                 return NotFound();
             }
             reservation.BranchReservations = new List<BranchReservation>();
-            reservation.BranchReservations.Add(db.BranchReservations.FirstOrDefault(x => x.ReservationId == reservation.Id && x.Reception == true));
-            reservation.BranchReservations.Add(db.BranchReservations.FirstOrDefault(x => x.ReservationId == reservation.Id && x.Reception == false));
+            var pom1 = db.BranchReservations.FirstOrDefault(x => x.ReservationId == reservation.Id && x.Reception == true);
+            //reservation.BranchReservations.Add(pom1);
+            var pom2 = db.BranchReservations.FirstOrDefault(x => x.ReservationId == reservation.Id && x.Reception == false);
+            //reservation.BranchReservations.Add(pom2);
             reservation.Vehicle = db.Vehicles.Get(reservation.VehicleId);
 
             return Ok(reservation);
@@ -108,6 +110,11 @@ namespace RentApp.Controllers
             }
 
             if (!free(reservation, true))
+            {
+                return BadRequest();
+            }
+
+            if (!db.Vehicles.FirstOrDefault(x => x.Id == reservation.VehicleId).Available)
             {
                 return BadRequest();
             }
@@ -350,9 +357,15 @@ namespace RentApp.Controllers
             {
                 return BadRequest("24");
             }
+
             if (reservation == null)
             {
                 return NotFound();
+            }
+
+            if (!db.Vehicles.FirstOrDefault(x => x.Id == reservation.VehicleId).Available)
+            {
+                return BadRequest();
             }
 
             BranchReservation br = db.BranchReservations.FirstOrDefault(x => x.Reception == true && x.ReservationId == reservation.Id);
