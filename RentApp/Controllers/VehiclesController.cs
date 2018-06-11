@@ -60,19 +60,24 @@ namespace RentApp.Controllers
 
 
         [HttpGet]
-        [Route("PaginationWithFilter/{pageNumber}/{pageSize}/{manuName}/{modelName}/{year}/{fromPrice}/{toPrice}/{type}")]
+        [Route("PaginationWithFilter")]
         [ResponseType(typeof(Vehicle))]
         public ICollection<Vehicle> PaginationWithFilter(int pageNumber, int pageSize, string manuName, string modelName, string year, int fromPrice, int toPrice, string type)
-        {
-            List<Vehicle> returnList =  db.Vehicles.GetAll(pageNumber, pageSize).Where(x => 
-            x.Mark.ToUpper().Contains(manuName.ToUpper()) &&
-            x.Model.ToUpper().Contains(modelName) &&
-            x.Year.ToString().Contains(year) &&
+      {
+            List<Vehicle> firstList = db.Vehicles.GetAll(pageNumber, pageSize).ToList();
+            if(!manuName.Equals("*")) firstList = firstList.Where(x => x.Mark.ToUpper().Equals(manuName.ToUpper())).ToList();
+            if (!modelName.Equals("*")) firstList = firstList.Where(x => x.Model.ToUpper().Equals(modelName.ToUpper())).ToList();
+            if (!year.Equals("*")) firstList = firstList.Where(x => x.Year.Equals(year)).ToList();
+            
+            List<Vehicle> returnList = firstList.Where(x => 
             price(x).Price >= fromPrice &&
             price(x).Price <= toPrice).ToList();
 
             if (type.Equals("All")) return returnList;
-            else return returnList.Where(x => x.TypeOfVehicle.Name.Equals(type)).ToList();
+            else
+            { var t = db.TypeOfVehicles.FirstOrDefault(x => x.Name.Equals(type));
+                return returnList.Where(x => x.TypeOfVehicleId == t.Id).ToList();
+            }
         }
 
         // PUT: api/Vehicles/5
