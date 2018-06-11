@@ -217,7 +217,7 @@ namespace RentApp.Controllers
                 grades.Add(item.Point);
             }
 
-            if (grades.Count < 1)
+            if (grades.Count >= 1)
             {
 
                 db.Services.Get(rate.ServiceId).AverageMark = grades.Average();
