@@ -35,6 +35,8 @@ namespace RentApp.Controllers
         }
 
 
+
+
         [HttpGet]
         [Route("GetAllRatesUser/{id}")]
         [ResponseType(typeof(Rate))]
@@ -48,14 +50,29 @@ namespace RentApp.Controllers
         [ResponseType(typeof(Rate))]
         public IEnumerable<Rate> GetAllRatesService(int id)
         {
-            return db.Rates.Find(x => x.ServiceId == id);
+            List<Rate> rates = db.Rates.Find(x => x.ServiceId == id).ToList();
+            foreach (var item in rates)
+            {
+                item.AppUser = db.AppUsers.FirstOrDefault(x => x.Id == item.AppUserId);
+            }
+
+            return rates;
         }
 
         [HttpGet]
-        [Route("CanLeaveComment/{id}/{serviceId}")]
-        public bool CanLeaveComment(int id, int serviceId)
+        [Route("CanLeaveComment")]
+        public IHttpActionResult CanLeaveComment(int id, int serviceId)
         {
-            return db.Reservations.Any(x => x.AppUserId == id &&  x.Expired == true  && x.Vehicle.ServiceId == serviceId) && !db.Rates.Any(x => x.AppUserId == id);
+            if (!db.Reservations.Any(x => x.AppUserId == id && x.Expired == true && x.Vehicle.ServiceId == serviceId))
+            {
+                return BadRequest();
+            }
+            if (db.Rates.Any(x => x.AppUserId == id && x.ServiceId == serviceId))
+            {
+                return BadRequest();
+            }
+
+            return Ok();
         }
 
 
@@ -108,12 +125,12 @@ namespace RentApp.Controllers
 
             List<int> grades = new List<int>();
 
-            foreach (var item in db.Services.Get(rate.Id).Rates)
+            foreach (var item in db.Rates.Find(x => x.ServiceId == rate.ServiceId))
             {
                 grades.Add(item.Point);
             }
 
-            db.Services.Get(rate.Id).AverageMark = grades.Average();
+            db.Services.Get(rate.ServiceId).AverageMark = grades.Average();
 
 
             try
@@ -140,10 +157,16 @@ namespace RentApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (!db.Reservations.Any(x => x.AppUserId == rate.AppUserId && x.Expired == true && x.Vehicle.ServiceId == rate.ServiceId) && db.Rates.Any(x => x.AppUserId == rate.Id))
+            if (!db.Reservations.Any(x => x.AppUserId == rate.AppUserId && x.Expired == true && x.Vehicle.ServiceId == rate.ServiceId))
             {
                 return BadRequest();
             }
+            if (db.Rates.Any(x => x.AppUserId == rate.AppUserId && x.ServiceId == rate.ServiceId))
+            {
+                return BadRequest();
+            }
+
+            rate.AppUser = db.AppUsers.FirstOrDefault(x => x.Id == rate.AppUserId);
 
             db.Rates.Add(rate);
 
@@ -151,12 +174,12 @@ namespace RentApp.Controllers
 
             List<int> grades = new List<int>();
 
-            foreach (var item in db.Services.Get(rate.Id).Rates)
+            foreach (var item in db.Rates.Find(x => x.ServiceId == rate.ServiceId))
             {
                 grades.Add(item.Point);
             }
 
-            db.Services.Get(rate.Id).AverageMark = grades.Average();
+            db.Services.Get(rate.ServiceId).AverageMark = grades.Average();
 
 
             db.SaveChanges();
@@ -189,12 +212,20 @@ namespace RentApp.Controllers
 
             List<int> grades = new List<int>();
 
-            foreach (var item in db.Services.Get(rate.Id).Rates)
+            foreach (var item in db.Rates.Find(x => x.ServiceId == rate.ServiceId))
             {
                 grades.Add(item.Point);
             }
 
-            db.Services.Get(rate.Id).AverageMark = grades.Average();
+            if (grades.Count < 1)
+            {
+
+                db.Services.Get(rate.ServiceId).AverageMark = grades.Average();
+            }
+            else
+            {
+                db.Services.Get(rate.ServiceId).AverageMark = 0;
+            }
 
 
             try

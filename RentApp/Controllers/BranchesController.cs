@@ -86,7 +86,10 @@ namespace RentApp.Controllers
             {
                 return BadRequest();
             }
-
+            if (db.Branches.Any(x => x.Name == branch.Name && x.ServiceId == branch.ServiceId && x.Id != branch.Id))
+            {
+                return BadRequest("Name should be unique");
+            }
             db.Branches.Update(branch);
 
             try
@@ -113,7 +116,7 @@ namespace RentApp.Controllers
                 return BadRequest(ModelState);
             }
 
-            if (db.Branches.Any(x => x.Name == branch.Name))
+            if (db.Branches.Any(x => x.Name == branch.Name && x.ServiceId == branch.ServiceId))
             {
                 return BadRequest("Name should be unique");
             }
