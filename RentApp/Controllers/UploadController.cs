@@ -15,6 +15,7 @@ namespace RentApp.Controllers
     public class UploadController : ApiController
     {
         private IUnitOfWork db;
+        private string serverAddress = "http://localhost:51432";
 
         public UploadController(IUnitOfWork db)
         {
@@ -67,9 +68,9 @@ namespace RentApp.Controllers
                         else
                         {
 
-                            filePath = HttpContext.Current.Server.MapPath("~/Images/ImageUsers/" + db.AppUsers.Get(id).Username + "_" +postedFile.FileName);
-
-                            postedFile.SaveAs(filePath);
+                            filePath = serverAddress + "/Content/Images/ImageUsers/" + db.AppUsers.Get(id).Username + "_" +postedFile.FileName;
+                            var savePath = HttpContext.Current.Server.MapPath("~/Content/Images/ImageUsers/" + db.AppUsers.Get(id).Username + "_" + postedFile.FileName);
+                            postedFile.SaveAs(savePath);
 
                         }
                     }
@@ -150,9 +151,10 @@ namespace RentApp.Controllers
                             var car = db.Vehicles.Get(id);
                             var service = db.Services.Get(car.ServiceId);
 
-                            filePath = HttpContext.Current.Server.MapPath("~/Images/ImageCars/" + service.Name + "_" + car.Id + "_" + postedFile.FileName);
+                            filePath = serverAddress + "/Content/Images/ImageCars/" + service.Name + "_" + car.Id + "_" + postedFile.FileName;
+                            var savePath = HttpContext.Current.Server.MapPath("~/Content/Images/ImageCars/" + service.Name + "_" + car.Id + "_" + postedFile.FileName);
 
-                            postedFile.SaveAs(filePath);
+                            postedFile.SaveAs(savePath);
 
                         }
                     }
@@ -239,9 +241,9 @@ namespace RentApp.Controllers
 
 
 
-                            filePath = HttpContext.Current.Server.MapPath("~/Images/ImageServices/" + db.Services.Get(id).Name + "_" + postedFile.FileName);
-
-                            postedFile.SaveAs(filePath);
+                            filePath = serverAddress + "/Content/Images/ImageServices/" + db.Services.Get(id).Name + "_" + postedFile.FileName;
+                            var savePath = HttpContext.Current.Server.MapPath("~/Content/Images/ImageServices/" + db.Services.Get(id).Name + "_" + postedFile.FileName);
+                            postedFile.SaveAs(savePath);
 
                         }
                     }
@@ -325,9 +327,10 @@ namespace RentApp.Controllers
                             var branch = db.Branches.Get(id);
                             var service = db.Services.Get(branch.ServiceId);
 
-                            filePath = HttpContext.Current.Server.MapPath("~/Images/ImageBranches/"  + service.Name +"_" + branch.Name + "_" + postedFile.FileName);
+                            filePath = serverAddress + "/Content/Images/ImageBranches/" + service.Name +"_" + branch.Name + "_" + postedFile.FileName;
+                            var savePath = HttpContext.Current.Server.MapPath("~/Content/Images/ImageBranches/" + service.Name + "_" + branch.Name + "_" + postedFile.FileName); 
 
-                            postedFile.SaveAs(filePath);
+                            postedFile.SaveAs(savePath);
 
                         }
                     }

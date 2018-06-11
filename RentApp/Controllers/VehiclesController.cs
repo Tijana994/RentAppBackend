@@ -58,6 +58,23 @@ namespace RentApp.Controllers
             return db.Vehicles.GetAll(pageNumber,pageSize).ToList();
         }
 
+
+        [HttpGet]
+        [Route("PaginationWithFilter/{pageNumber}/{pageSize}/{manuName}/{modelName}/{year}/{fromPrice}/{toPrice}/{type}")]
+        [ResponseType(typeof(Vehicle))]
+        public ICollection<Vehicle> PaginationWithFilter(int pageNumber, int pageSize, string manuName, string modelName, string year, int fromPrice, int toPrice, string type)
+        {
+            List<Vehicle> returnList =  db.Vehicles.GetAll(pageNumber, pageSize).Where(x => 
+            x.Mark.ToUpper().Contains(manuName.ToUpper()) &&
+            x.Model.ToUpper().Contains(modelName) &&
+            x.Year.ToString().Contains(year) &&
+            price(x).Price >= fromPrice &&
+            price(x).Price <= toPrice).ToList();
+
+            if (type.Equals("All")) return returnList;
+            else return returnList.Where(x => x.TypeOfVehicle.Name.Equals(type)).ToList();
+        }
+
         // PUT: api/Vehicles/5
         [HttpPut]
         [Authorize(Roles = "Manager")]
@@ -211,6 +228,26 @@ namespace RentApp.Controllers
         private bool VehicleExists(int id)
         {
             return db.Vehicles.Find(e => e.Id == id).Count() > 0;
+        }
+
+        private PriceList price(Vehicle vehicle)
+        {
+            PriceList price = null;
+
+            foreach (var item in vehicle.PriceLists)
+            {
+                if (item.StartDate < DateTime.Now && item.EndDate > DateTime.Now)
+                {
+                    price = item;
+                }
+            }
+
+            if (price == null)
+            {
+                price = vehicle.PriceLists.Last();
+            }
+
+            return price;
         }
     }
 }
