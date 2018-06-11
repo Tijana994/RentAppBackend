@@ -174,6 +174,24 @@ namespace RentApp.Controllers
                 return BadRequest();
             }
 
+            List<BranchReservation> pom = new List<BranchReservation>();
+            List<Reservation> res = new List<Reservation>();
+            
+            foreach (var branch in db.Branches.Find(x => x.ServiceId == id))
+            {
+                pom.AddRange(db.BranchReservations.Find(x => x.BranchId == branch.Id));
+            }
+
+            foreach (var item in db.Vehicles.Find(x => x.ServiceId == id))
+            {
+                res.AddRange(db.Reservations.Find(x => x.VehicleId == item.Id));
+            }
+
+
+            db.BranchReservations.RemoveRange(pom);
+
+            db.Reservations.RemoveRange(res);
+
             db.Services.Remove(service);
             try
             {

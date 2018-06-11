@@ -34,6 +34,31 @@ namespace RentApp.Controllers
             return db.Rates.GetAll();
         }
 
+
+        [HttpGet]
+        [Route("GetAllRatesUser/{id}")]
+        [ResponseType(typeof(Rate))]
+        public IEnumerable<Rate> GetAllRatesUser(int id)
+        {
+            return db.Rates.Find(x => x.AppUserId == id);
+        }
+
+        [HttpGet]
+        [Route("GetAllRatesService/{id}")]
+        [ResponseType(typeof(Rate))]
+        public IEnumerable<Rate> GetAllRatesService(int id)
+        {
+            return db.Rates.Find(x => x.ServiceId == id);
+        }
+
+        [HttpGet]
+        [Route("CanLeaveComment/{id}/{serviceId}")]
+        public bool CanLeaveComment(int id, int serviceId)
+        {
+            return db.Reservations.Any(x => x.AppUserId == id &&  x.Expired == true  && x.Vehicle.ServiceId == serviceId) && !db.Rates.Any(x => x.AppUserId == id);
+        }
+
+
         // GET: api/Rates/5
         [HttpGet]
         [Route("GetRate/{id}")]
@@ -52,7 +77,7 @@ namespace RentApp.Controllers
         // PUT: api/Rates/5
         [HttpPut]
         [Authorize]
-        [Route("PutRate")]
+        [Route("PutRate/{id}")]
         [ResponseType(typeof(void))]
         public IHttpActionResult PutRate(int id, Rate rate)
         {
@@ -66,7 +91,11 @@ namespace RentApp.Controllers
                 return BadRequest();
             }
 
+
+
             db.Rates.Update(rate);
+
+
 
             try
             {
@@ -74,17 +103,29 @@ namespace RentApp.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RateExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest();
             }
 
-            return StatusCode(HttpStatusCode.NoContent);
+            List<int> grades = new List<int>();
+
+            foreach (var item in db.Services.Get(rate.Id).Rates)
+            {
+                grades.Add(item.Point);
+            }
+
+            db.Services.Get(rate.Id).AverageMark = grades.Average();
+
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return BadRequest();
+            }
+
+            return Ok();
         }
 
         // POST: api/Rates
@@ -99,10 +140,28 @@ namespace RentApp.Controllers
                 return BadRequest(ModelState);
             }
 
+            if (!db.Reservations.Any(x => x.AppUserId == rate.AppUserId && x.Expired == true && x.Vehicle.ServiceId == rate.ServiceId) && db.Rates.Any(x => x.AppUserId == rate.Id))
+            {
+                return BadRequest();
+            }
+
             db.Rates.Add(rate);
+
             db.SaveChanges();
 
-            return CreatedAtRoute("DefaultApi", new { id = rate.Id }, rate);
+            List<int> grades = new List<int>();
+
+            foreach (var item in db.Services.Get(rate.Id).Rates)
+            {
+                grades.Add(item.Point);
+            }
+
+            db.Services.Get(rate.Id).AverageMark = grades.Average();
+
+
+            db.SaveChanges();
+
+            return Ok(rate);
         }
 
         // DELETE: api/Rates/5
@@ -119,9 +178,35 @@ namespace RentApp.Controllers
             }
 
             db.Rates.Remove(rate);
-            db.SaveChanges();
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return BadRequest();
+            }
 
-            return Ok(rate);
+            List<int> grades = new List<int>();
+
+            foreach (var item in db.Services.Get(rate.Id).Rates)
+            {
+                grades.Add(item.Point);
+            }
+
+            db.Services.Get(rate.Id).AverageMark = grades.Average();
+
+
+            try
+            {
+                db.SaveChanges();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                return BadRequest();
+            };
+
+            return Ok();
         }
 
         protected override void Dispose(bool disposing)

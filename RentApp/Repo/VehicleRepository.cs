@@ -19,7 +19,8 @@ namespace RentApp.Repo
 
         public IEnumerable<Vehicle> GetAll(int pageIndex, int pageSize)
         {
-            return ApplicationDbContext.Vehicles.Skip((pageIndex - 1) * pageSize).Take(pageSize);
+            
+            return ApplicationDbContext.Vehicles.OrderBy(x => x.Id).Skip((pageIndex - 1) * pageSize).Take(pageSize);
         }
     }
 }

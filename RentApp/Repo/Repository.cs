@@ -79,5 +79,7 @@ namespace RentApp.Repo
         {
             return Context.Set<TEntity>().AsNoTracking().ToList();
         }
+
+        
     }
 }

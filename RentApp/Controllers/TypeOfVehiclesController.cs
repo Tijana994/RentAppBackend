@@ -137,7 +137,23 @@ namespace RentApp.Controllers
             {
                 return NotFound();
             }
+            List<Vehicle> cars = new List<Vehicle>();
+            List<Reservation> reservations = new List<Reservation>();
+            List<BranchReservation> branchReservations = new List<BranchReservation>();
+            cars.AddRange(db.Vehicles.Find(x => x.TypeOfVehicleId == id));
+            foreach (var item in cars)
+            {
+                reservations.AddRange(db.Reservations.Find(x => x.VehicleId == item.Id));
+                
+            }
+            foreach (var item in reservations)
+            {
+                branchReservations.AddRange(db.BranchReservations.Find(x => x.ReservationId == item.Id));
+            }
 
+            db.Vehicles.RemoveRange(cars);
+            db.BranchReservations.RemoveRange(branchReservations);
+            db.Reservations.RemoveRange(reservations);
             db.TypeOfVehicles.Remove(typeOfVehicle);
 
             try

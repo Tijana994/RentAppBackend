@@ -149,6 +149,20 @@ namespace RentApp.Controllers
 
             try
             {
+                List<BranchReservation> branchReservations = new List<BranchReservation>();
+                List<Reservation> res = new List<Reservation>();
+                foreach (var item in db.BranchReservations.Find(x=>x.BranchId == branch.Id))
+                {
+                    branchReservations.AddRange(db.BranchReservations.Find(x => x.ReservationId == item.ReservationId));
+                    if (!res.Any(x => x.Id == item.ReservationId))
+                    {
+                        res.AddRange(db.Reservations.Find(x => x.Id == item.ReservationId));
+                    }
+                }
+
+                db.BranchReservations.RemoveRange(branchReservations);
+                db.Reservations.RemoveRange(res);
+               
                 db.Branches.Remove(branch);
                 db.SaveChanges();
             }

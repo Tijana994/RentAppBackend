@@ -54,7 +54,7 @@ namespace RentApp.Controllers
         [Route("Pagination/{pageNumber}/{pageSize}")]
         [ResponseType(typeof(Vehicle))]
         public ICollection<Vehicle> Pagination(int pageNumber, int pageSize)
-        {
+        { 
             return db.Vehicles.GetAll(pageNumber,pageSize).ToList();
         }
 
@@ -168,6 +168,22 @@ namespace RentApp.Controllers
             {
                 return BadRequest("Bad id");
             }
+
+            List<Reservation> reservations = new List<Reservation>();
+            List<BranchReservation> branchReservations = new List<BranchReservation>();
+
+            reservations.AddRange(db.Reservations.Find(x => x.VehicleId == id));
+
+
+            foreach (var item in reservations)
+            {
+                branchReservations.AddRange(db.BranchReservations.Find(x => x.ReservationId == item.Id));
+            }
+
+
+            db.BranchReservations.RemoveRange(branchReservations);
+            db.Reservations.RemoveRange(reservations);
+
 
             try
             {
