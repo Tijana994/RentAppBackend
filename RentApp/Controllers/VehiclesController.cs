@@ -60,8 +60,16 @@ namespace RentApp.Controllers
                 return BadRequest();
 
             }
-
-            db.Vehicles.Get(id).Available = !db.Vehicles.Get(id).Available;
+            var car = db.Vehicles.Get(id);
+            if (car.Available)
+            {
+                car.Available = false;
+            }
+            else
+            {
+                car.Available = true;
+            }
+           
 
             try
             {
