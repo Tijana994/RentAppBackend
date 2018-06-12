@@ -126,6 +126,7 @@ namespace RentApp.Controllers
         [ResponseType(typeof(void))]
         public IHttpActionResult PutVehicle(int id, Vehicle vehicle)
         {
+            vehicle.Available = true;
             vehicle.Service = db.Services.Get(vehicle.ServiceId);
             vehicle.TypeOfVehicle = db.TypeOfVehicles.Get(vehicle.TypeOfVehicleId);
            /* if (!ModelState.IsValid)
