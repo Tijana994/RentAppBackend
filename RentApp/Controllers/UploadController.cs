@@ -102,7 +102,7 @@ namespace RentApp.Controllers
         [HttpPost]
         [Route("car/PostCarImage/{id}")]
         [Authorize]
-        public IHttpActionResult PostCarImage(int id)
+        public IHttpActionResult CarPostCarImage(int id)
         {
             Dictionary<string, object> dict = new Dictionary<string, object>();
 
@@ -359,6 +359,106 @@ namespace RentApp.Controllers
                 dict.Add("error", res);
                 return BadRequest();
             }
+        }
+
+
+        [HttpPost]
+        [Route("PostCarImage/{id}")]
+        [Authorize]
+        public IHttpActionResult PostCarImage(int id)
+        {
+            Dictionary<string, object> dict = new Dictionary<string, object>();
+
+            string filePath = "";
+            //Vehicle car = new Vehicle();
+
+            try
+            {
+                if (!db.Vehicles.Any(x => x.Id == id))
+                {
+                    return BadRequest("Id is wrong");
+                }
+
+                var httpRequest = HttpContext.Current.Request;
+
+                foreach (string file in httpRequest.Files)
+                {
+
+                    filePath = "";
+                    HttpResponseMessage response = Request.CreateResponse(HttpStatusCode.Created);
+
+                    var postedFile = httpRequest.Files[file];
+                    if (postedFile != null && postedFile.ContentLength > 0)
+                    {
+
+                        int MaxContentLength = 1024 * 1024 * 2; //Size = 2 MB  
+
+                        IList<string> AllowedFileExtensions = new List<string> { ".jpg", ".gif", ".png" };
+                        var ext = postedFile.FileName.Substring(postedFile.FileName.LastIndexOf('.'));
+                        var extension = ext.ToLower();
+                        if (!AllowedFileExtensions.Contains(extension))
+                        {
+
+                            var message = string.Format("Please Upload image of type .jpg,.gif,.png.");
+
+                            dict.Add("error", message);
+                            return BadRequest("Please Upload image of type .jpg,.gif,.png.");
+                        }
+                        else if (postedFile.ContentLength > MaxContentLength)
+                        {
+
+                            var message = string.Format("Please Upload a file upto 2 mb.");
+
+                            dict.Add("error", message);
+                            return BadRequest("Please Upload a file upto 2 mb");
+                        }
+                        else
+                        {
+                            var car = db.Vehicles.Get(id);
+                            var service = db.Services.Get(car.ServiceId);
+
+                            filePath = serverAddress + "/Content/Images/ImageCars/" + service.Name + "_" + car.Id + "_" + postedFile.FileName;
+                            var savePath = HttpContext.Current.Server.MapPath("~/Content/Images/ImageCars/" + service.Name + "_" + car.Id + "_" + postedFile.FileName);
+
+                            postedFile.SaveAs(savePath);
+                            try
+                            {
+                                Pic pic = new Models.Entities.Pic();
+                                pic.Path = filePath;
+                                pic.VehicleId = id;
+                                if (car.Pics == null)
+                                {
+                                    car.Pics = new List<Pic>();
+                                }
+                                car.Pics.Add(pic);
+                                db.SaveChanges();
+                            }
+                            catch (Exception ex)
+                            {
+
+                                return BadRequest("Somebody already change picture");
+                            }
+
+                        }
+                    }
+
+                    var message1 = string.Format("Image Updated Successfully.");
+
+                   
+
+
+                }
+                return Ok(filePath);
+
+            }
+            catch (Exception ex)
+            {
+                var res = string.Format("error");
+                dict.Add("error", res);
+                return BadRequest();
+            }
+
+
         }
     }
 }

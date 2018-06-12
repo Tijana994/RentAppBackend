@@ -33,6 +33,14 @@ namespace RentApp.Controllers
             return db.Branches.GetAll();
         }
 
+
+        [HttpGet]
+        [Route("Path/{id}")]
+        public string Path(int id)
+        {
+            return db.Branches.Get(id).Path;
+        }
+
         [HttpGet]
         [Route("GetAllBrancesOfService/{id}")]
         [ResponseType(typeof(Branch))]

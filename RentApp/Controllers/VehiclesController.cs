@@ -47,6 +47,8 @@ namespace RentApp.Controllers
                 return NotFound();
             }
 
+            vehicle.Pics = db.Pics.Find(x => x.VehicleId == vehicle.Id).ToList();
+
             return Ok(vehicle);
         }
 
@@ -96,6 +98,10 @@ namespace RentApp.Controllers
         public int PaginationWithFilterCount(int pageNumber, int pageSize, string manuName, string modelName, string year, int fromPrice, int toPrice, string type, int serviceId)
         {
             List<Vehicle> firstList = db.Vehicles.GetAll().ToList();
+            foreach (var item in firstList)
+            {
+                item.Pics = db.Pics.Find(x => x.VehicleId  == item.Id).ToList();
+            }
             if (!manuName.Equals("*")) firstList = firstList.Where(x => x.Mark.ToUpper().Equals(manuName.ToUpper())).ToList();
             if (!modelName.Equals("*")) firstList = firstList.Where(x => x.Model.ToUpper().Equals(modelName.ToUpper())).ToList();
             if (!year.Equals("*")) firstList = firstList.Where(x => x.Year.Equals(year)).ToList();
